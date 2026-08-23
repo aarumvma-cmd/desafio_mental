@@ -1,0 +1,1277 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Quiz interactivo de cultura general para estudiantes de secundaria.">
+  <title>Cultura General — Quiz Secundaria</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+:root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#68738a;--primary:#5b4bdb;--primary2:#7a68f2;--green:#22a06b;--red:#dc4c64;--yellow:#d99a00;--shadow:0 18px 50px rgba(30,35,60,.12)}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#eef0ff 0,#f7f8fc 45%,#eef2f7 100%);color:var(--ink);font-family:Nunito,system-ui,sans-serif;min-height:100vh}button{font:inherit;cursor:pointer;border:0}
+.screen{display:none;min-height:100vh;padding:28px}.screen.active{display:block}.hero{max-width:980px;margin:20px auto 28px;text-align:center;padding:54px 20px 32px}.hero-badge{display:inline-block;background:#e7e4ff;color:var(--primary);font-weight:900;padding:9px 15px;border-radius:999px;letter-spacing:.08em;font-size:12px}.hero h1{font-size:clamp(42px,7vw,78px);line-height:1;margin:18px 0 14px;letter-spacing:-.04em}.hero p{max-width:700px;margin:auto;color:var(--muted);font-size:18px}.home-stats{display:flex;justify-content:center;gap:12px;margin-top:28px;flex-wrap:wrap}.home-stats div{background:#fff;padding:13px 22px;border-radius:16px;box-shadow:0 8px 25px rgba(30,35,60,.07)}.home-stats strong,.home-stats span{display:block}.home-stats strong{font-size:22px}.home-stats span{font-size:12px;color:var(--muted)}
+.mode-panel{max-width:980px;margin:auto;background:rgba(255,255,255,.78);backdrop-filter:blur(10px);padding:28px;border-radius:28px;box-shadow:var(--shadow)}.mode-panel h2{text-align:center;margin:0 0 20px}.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.mode-card{padding:20px;text-align:left;background:#fff;border:2px solid transparent;border-radius:20px;box-shadow:0 7px 20px rgba(30,35,60,.06);transition:.2s}.mode-card:hover{transform:translateY(-3px);border-color:#c9c4ff}.mode-card span{font-size:28px;display:block;margin-bottom:10px}.mode-card b,.mode-card small{display:block}.mode-card small{color:var(--muted);margin-top:4px}.category-picker{margin-top:18px;padding-top:18px;border-top:1px solid #e7e9ef;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.category-picker button{padding:11px 15px;border-radius:12px;background:#f1f2f7;color:var(--ink);font-weight:800}.hidden{display:none!important}
+.quiz-top{max-width:960px;margin:auto;display:flex;align-items:center;justify-content:space-between}.ghost-btn{background:transparent;color:var(--muted);font-weight:800}.score-box{background:#fff;padding:10px 15px;border-radius:14px;box-shadow:0 7px 20px rgba(30,35,60,.08);font-weight:900}.progress-wrap{max-width:960px;margin:18px auto}.progress-meta{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;font-weight:800;margin-bottom:8px}.progress{height:10px;background:#e4e7ef;border-radius:999px;overflow:hidden}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--primary2));transition:width .4s ease}
+.question-card{max-width:960px;margin:18px auto;background:var(--card);border-radius:30px;overflow:hidden;box-shadow:var(--shadow);animation:rise .35s ease}.question-meta{padding:18px 22px 0;display:flex;gap:8px}.question-meta span{font-size:12px;font-weight:900;padding:7px 10px;border-radius:999px;background:#f0efff;color:var(--primary)}.question-meta #difficulty-chip{background:#fff2cf;color:#9a6a00}.image-frame{margin:16px 22px 0;border-radius:22px;overflow:hidden;background:#f2f4f8;aspect-ratio:16/8;display:flex}.image-frame img{width:100%;height:100%;object-fit:cover}.question-content{padding:24px 30px 30px}.question-content h2{font-size:clamp(22px,3vw,34px);line-height:1.2;margin:0 0 20px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}.answer{background:#f6f7fb;border:2px solid transparent;padding:16px;text-align:left;border-radius:16px;font-weight:800;color:var(--ink);transition:.2s}.answer:hover:not(:disabled){border-color:#bbb5ff;background:#f0efff}.answer.correct{background:#e6f7ef;border-color:var(--green)}.answer.wrong{background:#fdecef;border-color:var(--red)}.answer:disabled{cursor:default}.feedback{margin-top:18px;border-radius:16px;padding:16px;background:#f7f8fb;line-height:1.55}.feedback strong{display:block;margin-bottom:5px}.next-btn{margin-top:16px;width:100%;padding:15px;border-radius:15px;background:var(--primary);color:#fff;font-weight:900}.feedback .procedure{margin-top:10px;padding:12px;background:#fff;border-radius:12px;font-size:14px}
+.results-card{max-width:760px;margin:30px auto;text-align:center;background:#fff;border-radius:30px;padding:42px 28px;box-shadow:var(--shadow)}.trophy{font-size:64px}.eyebrow{color:var(--primary);font-weight:900;letter-spacing:.12em;font-size:12px}.results-card h1{font-size:42px;margin:8px}.big-score{font-size:68px;font-weight:900;color:var(--primary);margin:12px}.big-score small{font-size:22px;color:var(--muted)}.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:22px 0}.result-grid div{background:#f7f8fb;border-radius:16px;padding:15px}.result-grid strong,.result-grid span{display:block}.result-grid strong{font-size:24px}.result-grid span{color:var(--muted);font-size:13px}.category-results{display:grid;gap:8px;text-align:left;margin:20px 0}.cat-row{display:flex;align-items:center;gap:10px}.cat-row b{width:120px;font-size:13px}.cat-track{height:9px;flex:1;background:#e8eaf0;border-radius:99px;overflow:hidden}.cat-track i{display:block;height:100%;background:var(--primary);border-radius:99px}.result-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.primary-btn,.secondary-btn{padding:14px 20px;border-radius:14px;font-weight:900}.primary-btn{background:var(--primary);color:#fff}.secondary-btn{background:#eef0f5;color:var(--ink)}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media(max-width:720px){.screen{padding:14px}.mode-grid{grid-template-columns:1fr}.answers{grid-template-columns:1fr}.question-card{border-radius:22px}.question-content{padding:20px}.image-frame{margin:12px 14px 0}.hero{padding-top:35px}.result-grid{grid-template-columns:1fr 1fr}.result-grid div:last-child{grid-column:1/-1}.cat-row b{width:95px;font-size:12px}}
+
+</style>
+</head>
+<body>
+  <main id="app">
+    <section id="home" class="screen active">
+      <div class="hero">
+        <div class="hero-badge">🎓 QUIZ EDUCATIVO</div>
+        <h1>Cultura General</h1>
+        <p>60 retos visuales de Historia, Geografía, Aritmética, Geometría, Biología y Anatomía.</p>
+        <div class="home-stats">
+          <div><strong>60</strong><span>preguntas</span></div>
+          <div><strong>6</strong><span>materias</span></div>
+          <div><strong>600</strong><span>puntos</span></div>
+        </div>
+      </div>
+      <div class="mode-panel">
+        <h2>Elige tu modo</h2>
+        <div class="mode-grid">
+          <button class="mode-card" data-mode="general"><span>🎯</span><b>Modo general</b><small>Las 60 preguntas mezcladas</small></button>
+          <button class="mode-card" data-mode="category"><span>📚</span><b>Por categoría</b><small>Elige una materia</small></button>
+          <button class="mode-card" data-mode="random"><span>🎲</span><b>Aleatorio</b><small>Preguntas seleccionadas al azar</small></button>
+          <button class="mode-card" data-mode="basico"><span>🟢</span><b>Básico</b><small>18 preguntas fundamentales</small></button>
+          <button class="mode-card" data-mode="intermedio"><span>🟡</span><b>Intermedio</b><small>24 preguntas de aplicación</small></button>
+          <button class="mode-card" data-mode="avanzado"><span>🔴</span><b>Avanzado</b><small>18 retos de razonamiento</small></button>
+        </div>
+        <div id="category-picker" class="category-picker hidden"></div>
+      </div>
+    </section>
+
+    <section id="quiz" class="screen">
+      <header class="quiz-top">
+        <button id="quit-btn" class="ghost-btn">← Salir</button>
+        <div class="score-box">⭐ <span id="score">0</span></div>
+      </header>
+      <div class="progress-wrap">
+        <div class="progress-meta"><span id="progress-label">Pregunta 1 de 60</span><span id="percent">0%</span></div>
+        <div class="progress"><div id="progress-bar"></div></div>
+      </div>
+      <article class="question-card">
+        <div class="question-meta"><span id="category-chip"></span><span id="difficulty-chip"></span></div>
+        <div class="image-frame"><img id="question-image" alt=""></div>
+        <div class="question-content">
+          <h2 id="question-text"></h2>
+          <div id="answers" class="answers"></div>
+          <div id="feedback" class="feedback hidden"></div>
+          <button id="next-btn" class="next-btn hidden">Siguiente →</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="results" class="screen">
+      <div class="results-card">
+        <div class="trophy">🏆</div>
+        <p class="eyebrow">RESULTADO FINAL</p>
+        <h1 id="result-title">¡Buen trabajo!</h1>
+        <div class="big-score"><span id="final-score">0</span><small>/ 600</small></div>
+        <p id="result-message"></p>
+        <div class="result-grid">
+          <div><strong id="correct-count">0</strong><span>Correctas</span></div>
+          <div><strong id="wrong-count">0</strong><span>Incorrectas</span></div>
+          <div><strong id="final-percent">0%</strong><span>Porcentaje</span></div>
+        </div>
+        <div id="category-results" class="category-results"></div>
+        <div class="result-actions">
+          <button id="restart-btn" class="primary-btn">Jugar otra vez</button>
+          <button id="home-btn" class="secondary-btn">Volver al inicio</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+const QUESTION_BANK = [
+  {
+    "id": 1,
+    "categoria": "Historia",
+    "dificultad": "basico",
+    "pregunta": "¿Qué factor fue decisivo para que las sociedades agrícolas antiguas pudieran establecer asentamientos permanentes?",
+    "tema": "Revolución agrícola",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "La invención de la imprenta",
+      "La navegación oceánica",
+      "La producción estable de alimentos",
+      "El uso de electricidad"
+    ],
+    "explicacion": "La agricultura permitió producir alimentos de manera relativamente estable y favoreció el sedentarismo, el crecimiento poblacional y la organización de comunidades permanentes.",
+    "dato": "La transición hacia la agricultura ocurrió de manera independiente en distintas regiones del mundo.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YzZThkNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZDliMzhjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iODUiIHk9IjExNSIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iLjgiLz48cGF0aCBkPSJNMTA1IDIzNVYxNDVoNjB2OTBtMjAgMFYxMjVoNjB2MTEwbTIwIDBWMTYwaDYwdjc1IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YjNhMjkiIHN0cm9rZS13aWR0aD0iMTAiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSI4MiIgcj0iMjgiIGZpbGw9IiNkOWIzOGMiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViM2EyOSI+UmV2b2x1Y2nDs24gYWdyw61jb2xhPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Ilustración de un asentamiento agrícola antiguo junto a campos cultivados y un río."
+  },
+  {
+    "id": 2,
+    "categoria": "Historia",
+    "dificultad": "intermedio",
+    "pregunta": "¿Por qué el sistema de mita colonial afectó especialmente a las comunidades indígenas de los Andes?",
+    "tema": "Virreinato y trabajo",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "Porque establecía turnos obligatorios de trabajo para determinadas actividades",
+      "Porque prohibía toda actividad agrícola",
+      "Porque convertía a todos los indígenas en comerciantes",
+      "Porque eliminaba los tributos"
+    ],
+    "explicacion": "La mita colonial reutilizó y transformó mecanismos de trabajo obligatorio existentes, destinando población indígena a labores como la minería y otras actividades.",
+    "dato": "La minería de plata de Potosí fue uno de los grandes centros de trabajo obligatorio durante el Virreinato.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YzZThkNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZDliMzhjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iODUiIHk9IjExNSIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iLjgiLz48cGF0aCBkPSJNMTA1IDIzNVYxNDVoNjB2OTBtMjAgMFYxMjVoNjB2MTEwbTIwIDBWMTYwaDYwdjc1IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YjNhMjkiIHN0cm9rZS13aWR0aD0iMTAiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSI4MiIgcj0iMjgiIGZpbGw9IiNkOWIzOGMiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViM2EyOSI+VmlycmVpbmF0byB5IHRyYWJham88L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Escena histórica educativa de trabajadores andinos y una mina colonial, sin texto."
+  },
+  {
+    "id": 3,
+    "categoria": "Historia",
+    "dificultad": "avanzado",
+    "pregunta": "¿Qué relación ayuda a explicar mejor por qué la Revolución Industrial comenzó en Gran Bretaña?",
+    "tema": "Revolución Industrial",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "Solo la existencia de grandes ejércitos",
+      "La ausencia de comercio internacional",
+      "La eliminación de toda actividad agrícola",
+      "La combinación de recursos, capital, mercados e innovaciones técnicas"
+    ],
+    "explicacion": "El inicio de la industrialización británica se relaciona con una combinación de carbón, recursos, capital, mercados, comercio, instituciones e innovaciones técnicas; no con una sola causa.",
+    "dato": "La máquina de vapor fue perfeccionada durante el siglo XVIII y tuvo un papel central en la industrialización.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YzZThkNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZDliMzhjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iODUiIHk9IjExNSIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iLjgiLz48cGF0aCBkPSJNMTA1IDIzNVYxNDVoNjB2OTBtMjAgMFYxMjVoNjB2MTEwbTIwIDBWMTYwaDYwdjc1IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YjNhMjkiIHN0cm9rZS13aWR0aD0iMTAiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSI4MiIgcj0iMjgiIGZpbGw9IiNkOWIzOGMiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViM2EyOSI+UmV2b2x1Y2nDs24gSW5kdXN0cmlhbDwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Paisaje industrial británico del siglo XVIII con fábrica, carbón, máquina de vapor y canales."
+  },
+  {
+    "id": 4,
+    "categoria": "Historia",
+    "dificultad": "basico",
+    "pregunta": "¿Cuál fue una consecuencia política importante de la Revolución Francesa?",
+    "tema": "Revolución Francesa",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "La difusión de ideas de ciudadanía e igualdad jurídica",
+      "El regreso del feudalismo en toda Europa",
+      "La desaparición inmediata de las monarquías europeas",
+      "La creación de las Naciones Unidas"
+    ],
+    "explicacion": "La Revolución Francesa impulsó ideas de ciudadanía, soberanía popular e igualdad ante la ley que influyeron profundamente en la política europea y atlántica.",
+    "dato": "La Declaración de los Derechos del Hombre y del Ciudadano fue aprobada en 1789.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YzZThkNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZDliMzhjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iODUiIHk9IjExNSIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iLjgiLz48cGF0aCBkPSJNMTA1IDIzNVYxNDVoNjB2OTBtMjAgMFYxMjVoNjB2MTEwbTIwIDBWMTYwaDYwdjc1IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YjNhMjkiIHN0cm9rZS13aWR0aD0iMTAiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSI4MiIgcj0iMjgiIGZpbGw9IiNkOWIzOGMiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViM2EyOSI+UmV2b2x1Y2nDs24gRnJhbmNlc2E8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Representación histórica de una asamblea revolucionaria francesa con documentos y público."
+  },
+  {
+    "id": 5,
+    "categoria": "Historia",
+    "dificultad": "intermedio",
+    "pregunta": "¿Por qué la ubicación del Imperio incaico favoreció una extensa red de caminos?",
+    "tema": "Imperio incaico",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "Porque el territorio era completamente plano",
+      "Porque no existían montañas",
+      "Porque permitía conectar regiones muy diversas de un territorio andino amplio",
+      "Porque los caminos se construyeron principalmente para vehículos con ruedas"
+    ],
+    "explicacion": "La red vial incaica permitió integrar territorios con grandes diferencias de altitud y geografía, facilitando comunicación, administración y movimiento de personas y recursos.",
+    "dato": "El Qhapaq Ñan llegó a extenderse por varios países actuales de Sudamérica.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YzZThkNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZDliMzhjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iODUiIHk9IjExNSIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iLjgiLz48cGF0aCBkPSJNMTA1IDIzNVYxNDVoNjB2OTBtMjAgMFYxMjVoNjB2MTEwbTIwIDBWMTYwaDYwdjc1IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YjNhMjkiIHN0cm9rZS13aWR0aD0iMTAiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSI4MiIgcj0iMjgiIGZpbGw9IiNkOWIzOGMiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViM2EyOSI+SW1wZXJpbyBpbmNhaWNvPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Mapa artístico de los Andes con caminos incas atravesando montañas y valles."
+  },
+  {
+    "id": 6,
+    "categoria": "Historia",
+    "dificultad": "avanzado",
+    "pregunta": "¿Cuál fue una razón estratégica por la que la toma de Constantinopla en 1453 tuvo gran impacto en Europa?",
+    "tema": "Constantinopla",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "Porque terminó inmediatamente con todas las guerras europeas",
+      "Porque modificó rutas comerciales y estimuló la búsqueda de nuevas conexiones hacia Asia",
+      "Porque inventó la pólvora",
+      "Porque trasladó la capital de España"
+    ],
+    "explicacion": "La conquista otomana alteró dinámicas comerciales y políticas entre Europa y Asia. En el contexto de otros factores, contribuyó al interés europeo por encontrar nuevas rutas marítimas.",
+    "dato": "Constantinopla fue la capital del Imperio bizantino y pasó al Imperio otomano en 1453.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YzZThkNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZDliMzhjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iODUiIHk9IjExNSIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iLjgiLz48cGF0aCBkPSJNMTA1IDIzNVYxNDVoNjB2OTBtMjAgMFYxMjVoNjB2MTEwbTIwIDBWMTYwaDYwdjc1IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YjNhMjkiIHN0cm9rZS13aWR0aD0iMTAiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSI4MiIgcj0iMjgiIGZpbGw9IiNkOWIzOGMiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViM2EyOSI+Q29uc3RhbnRpbm9wbGE8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Vista histórica estilizada de Constantinopla con murallas, puerto y rutas comerciales."
+  },
+  {
+    "id": 7,
+    "categoria": "Historia",
+    "dificultad": "intermedio",
+    "pregunta": "¿Qué característica distinguió a la Guerra Fría frente a una guerra mundial convencional?",
+    "tema": "Guerra Fría",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "No existieron tensiones militares",
+      "Solo participaron dos países",
+      "No hubo competencia tecnológica",
+      "Las superpotencias compitieron sin enfrentarse directamente en una guerra total entre ellas"
+    ],
+    "explicacion": "Estados Unidos y la Unión Soviética compitieron política, militar, económica, tecnológica e ideológicamente, pero evitaron una guerra directa total entre ambas potencias.",
+    "dato": "La carrera espacial fue una de las expresiones de esa competencia tecnológica.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YzZThkNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZDliMzhjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iODUiIHk9IjExNSIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iLjgiLz48cGF0aCBkPSJNMTA1IDIzNVYxNDVoNjB2OTBtMjAgMFYxMjVoNjB2MTEwbTIwIDBWMTYwaDYwdjc1IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YjNhMjkiIHN0cm9rZS13aWR0aD0iMTAiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSI4MiIgcj0iMjgiIGZpbGw9IiNkOWIzOGMiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViM2EyOSI+R3VlcnJhIEZyw61hPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Escena simbólica de la Guerra Fría con dos bloques, misiles, satélite y tablero geopolítico."
+  },
+  {
+    "id": 8,
+    "categoria": "Historia",
+    "dificultad": "basico",
+    "pregunta": "¿Qué objetivo perseguía principalmente el proceso de independencia de las colonias hispanoamericanas?",
+    "tema": "Independencia de América",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "Restablecer el dominio colonial español",
+      "Eliminar todos los gobiernos locales",
+      "Conseguir autonomía o independencia política respecto de España",
+      "Crear un único imperio europeo"
+    ],
+    "explicacion": "Los movimientos independentistas buscaron romper la dependencia política de las autoridades españolas y crear nuevos Estados o formas de gobierno autónomas.",
+    "dato": "La independencia hispanoamericana ocurrió mediante procesos distintos y en diferentes momentos según cada región.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YzZThkNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZDliMzhjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iODUiIHk9IjExNSIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iLjgiLz48cGF0aCBkPSJNMTA1IDIzNVYxNDVoNjB2OTBtMjAgMFYxMjVoNjB2MTEwbTIwIDBWMTYwaDYwdjc1IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YjNhMjkiIHN0cm9rZS13aWR0aD0iMTAiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSI4MiIgcj0iMjgiIGZpbGw9IiNkOWIzOGMiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViM2EyOSI+SW5kZXBlbmRlbmNpYSBkZSBBbcOpcmljYTwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Escena histórica de una proclamación de independencia en América Latina, con plaza y banderas sin texto."
+  },
+  {
+    "id": 9,
+    "categoria": "Historia",
+    "dificultad": "intermedio",
+    "pregunta": "¿Qué elemento permitió a muchas civilizaciones mesopotámicas desarrollar ciudades complejas?",
+    "tema": "Mesopotamia",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "El aprovechamiento de los ríos para agricultura y organización social",
+      "La ausencia de agricultura",
+      "El aislamiento total de otras regiones",
+      "La existencia de ferrocarriles"
+    ],
+    "explicacion": "Los ríos Tigris y Éufrates permitieron desarrollar sistemas agrícolas mediante riego y sostener poblaciones urbanas, aunque también exigieron organización colectiva.",
+    "dato": "Mesopotamia significa aproximadamente “tierra entre ríos”.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YzZThkNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZDliMzhjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iODUiIHk9IjExNSIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iLjgiLz48cGF0aCBkPSJNMTA1IDIzNVYxNDVoNjB2OTBtMjAgMFYxMjVoNjB2MTEwbTIwIDBWMTYwaDYwdjc1IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YjNhMjkiIHN0cm9rZS13aWR0aD0iMTAiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSI4MiIgcj0iMjgiIGZpbGw9IiNkOWIzOGMiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViM2EyOSI+TWVzb3BvdGFtaWE8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Ciudad antigua de Mesopotamia junto a canales de riego, campos y ríos."
+  },
+  {
+    "id": 10,
+    "categoria": "Historia",
+    "dificultad": "avanzado",
+    "pregunta": "¿Qué combinación explica mejor el crecimiento de los movimientos obreros durante la industrialización?",
+    "tema": "Movimiento obrero",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "La reducción universal de las jornadas laborales desde el inicio",
+      "La desaparición de las fábricas",
+      "La concentración de trabajadores y los problemas laborales en centros industriales",
+      "La prohibición de asociaciones obreras en todos los países"
+    ],
+    "explicacion": "La concentración de trabajadores en fábricas y ciudades hizo visibles problemas como largas jornadas, bajos salarios y condiciones inseguras, favoreciendo la organización y las demandas laborales.",
+    "dato": "Los movimientos obreros contribuyeron históricamente a la defensa de derechos laborales y sociales.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YzZThkNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZDliMzhjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iODUiIHk9IjExNSIgd2lkdGg9IjI1MCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iLjgiLz48cGF0aCBkPSJNMTA1IDIzNVYxNDVoNjB2OTBtMjAgMFYxMjVoNjB2MTEwbTIwIDBWMTYwaDYwdjc1IiBmaWxsPSJub25lIiBzdHJva2U9IiM1YjNhMjkiIHN0cm9rZS13aWR0aD0iMTAiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSI4MiIgcj0iMjgiIGZpbGw9IiNkOWIzOGMiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzViM2EyOSI+TW92aW1pZW50byBvYnJlcm88L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Interior de una fábrica industrial del siglo XIX con trabajadores, máquinas y organización colectiva."
+  },
+  {
+    "id": 11,
+    "categoria": "Geografía",
+    "dificultad": "basico",
+    "pregunta": "Una zona presenta lluvias abundantes durante gran parte del año y vegetación muy densa. ¿Qué ambiente es más probable?",
+    "tema": "Climas",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "Desierto cálido",
+      "Selva tropical",
+      "Tundra",
+      "Estepa fría"
+    ],
+    "explicacion": "La combinación de altas precipitaciones y vegetación densa es característica de ambientes de selva tropical.",
+    "dato": "Las selvas tropicales albergan una gran proporción de la biodiversidad terrestre.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2U2ZjZmNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNjdiN2M4IiBvcGFjaXR5PSIuMTYiLz4KPHBhdGggZD0iTTYwIDIzMCBDMTEwIDE2MCAxMzAgMjAwIDE3NSAxMzAgUzI1MCAxMjAgMjg1IDc1IFMzNDAgMTEwIDM3MCA1NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTY0ZTYzIiBzdHJva2Utd2lkdGg9IjE2Ii8+PHBhdGggZD0iTTU1IDI0NSBRMTcwIDE4NSAzNjUgMjM1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2N2I3YzgiIHN0cm9rZS13aWR0aD0iMjAiLz48Y2lyY2xlIGN4PSI5MCIgY3k9Ijc1IiByPSIyOCIgZmlsbD0iI2Y0Yzk1ZCIvPgo8dGV4dCB4PSIyMTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTY0ZTYzIj5DbGltYXM8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Paisaje de selva tropical con río, vegetación densa y lluvia ligera."
+  },
+  {
+    "id": 12,
+    "categoria": "Geografía",
+    "dificultad": "intermedio",
+    "pregunta": "¿Por qué las ciudades ubicadas a gran altitud suelen presentar temperaturas más bajas que otras ubicadas a menor altitud en la misma latitud?",
+    "tema": "Altitud",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "Porque están más cerca del centro de la Tierra",
+      "Porque siempre reciben menos luz solar",
+      "Porque la temperatura del aire suele disminuir con la altitud",
+      "Porque la gravedad desaparece en las montañas"
+    ],
+    "explicacion": "En la troposfera, la temperatura generalmente disminuye al aumentar la altitud. Por eso la altura puede modificar notablemente el clima local.",
+    "dato": "La Cordillera de los Andes presenta ciudades situadas a miles de metros sobre el nivel del mar.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2U2ZjZmNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNjdiN2M4IiBvcGFjaXR5PSIuMTYiLz4KPHBhdGggZD0iTTYwIDIzMCBDMTEwIDE2MCAxMzAgMjAwIDE3NSAxMzAgUzI1MCAxMjAgMjg1IDc1IFMzNDAgMTEwIDM3MCA1NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTY0ZTYzIiBzdHJva2Utd2lkdGg9IjE2Ii8+PHBhdGggZD0iTTU1IDI0NSBRMTcwIDE4NSAzNjUgMjM1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2N2I3YzgiIHN0cm9rZS13aWR0aD0iMjAiLz48Y2lyY2xlIGN4PSI5MCIgY3k9Ijc1IiByPSIyOCIgZmlsbD0iI2Y0Yzk1ZCIvPgo8dGV4dCB4PSIyMTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTY0ZTYzIj5BbHRpdHVkPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Comparación visual de un valle y una ciudad andina de gran altitud con montañas nevadas."
+  },
+  {
+    "id": 13,
+    "categoria": "Geografía",
+    "dificultad": "avanzado",
+    "pregunta": "Si dos lugares están en la misma latitud pero uno está cerca del océano y otro en el interior continental, ¿qué diferencia climática es razonable esperar?",
+    "tema": "Clima continental y marítimo",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "El lugar costero suele tener temperaturas más moderadas",
+      "El lugar costero siempre es más frío",
+      "El lugar continental siempre recibe más lluvia",
+      "No puede existir ninguna diferencia climática"
+    ],
+    "explicacion": "El agua del océano cambia de temperatura más lentamente que la tierra, por lo que las zonas costeras suelen presentar menor amplitud térmica que áreas continentales interiores.",
+    "dato": "La influencia marítima puede modificar tanto las temperaturas como la humedad de una región.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2U2ZjZmNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNjdiN2M4IiBvcGFjaXR5PSIuMTYiLz4KPHBhdGggZD0iTTYwIDIzMCBDMTEwIDE2MCAxMzAgMjAwIDE3NSAxMzAgUzI1MCAxMjAgMjg1IDc1IFMzNDAgMTEwIDM3MCA1NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTY0ZTYzIiBzdHJva2Utd2lkdGg9IjE2Ii8+PHBhdGggZD0iTTU1IDI0NSBRMTcwIDE4NSAzNjUgMjM1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2N2I3YzgiIHN0cm9rZS13aWR0aD0iMjAiLz48Y2lyY2xlIGN4PSI5MCIgY3k9Ijc1IiByPSIyOCIgZmlsbD0iI2Y0Yzk1ZCIvPgo8dGV4dCB4PSIyMTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTY0ZTYzIj5DbGltYSBjb250aW5lbnRhbCB5IG1hcsOtdGltbzwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Mapa climático estilizado comparando una costa y una zona interior continental."
+  },
+  {
+    "id": 14,
+    "categoria": "Geografía",
+    "dificultad": "basico",
+    "pregunta": "¿Qué línea imaginaria divide aproximadamente la Tierra en hemisferio norte y hemisferio sur?",
+    "tema": "Coordenadas geográficas",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "El ecuador",
+      "El meridiano de Greenwich",
+      "El trópico de Capricornio",
+      "El círculo polar ártico"
+    ],
+    "explicacion": "El ecuador corresponde a la latitud 0° y separa convencionalmente los hemisferios norte y sur.",
+    "dato": "El ecuador atraviesa varios países de Sudamérica, África y Asia.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2U2ZjZmNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNjdiN2M4IiBvcGFjaXR5PSIuMTYiLz4KPHBhdGggZD0iTTYwIDIzMCBDMTEwIDE2MCAxMzAgMjAwIDE3NSAxMzAgUzI1MCAxMjAgMjg1IDc1IFMzNDAgMTEwIDM3MCA1NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTY0ZTYzIiBzdHJva2Utd2lkdGg9IjE2Ii8+PHBhdGggZD0iTTU1IDI0NSBRMTcwIDE4NSAzNjUgMjM1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2N2I3YzgiIHN0cm9rZS13aWR0aD0iMjAiLz48Y2lyY2xlIGN4PSI5MCIgY3k9Ijc1IiByPSIyOCIgZmlsbD0iI2Y0Yzk1ZCIvPgo8dGV4dCB4PSIyMTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTY0ZTYzIj5Db29yZGVuYWRhcyBnZW9ncsOhZmljYXM8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Globo terráqueo con el ecuador resaltado visualmente, sin etiquetas de respuesta."
+  },
+  {
+    "id": 15,
+    "categoria": "Geografía",
+    "dificultad": "intermedio",
+    "pregunta": "¿Qué efecto puede producir la presencia de la corriente de Humboldt frente a las costas del Perú?",
+    "tema": "Corrientes marinas",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "Aumenta siempre la temperatura del mar",
+      "Elimina los nutrientes del océano",
+      "Convierte toda la costa en selva tropical",
+      "Contribuye a aguas frías y ricas en nutrientes"
+    ],
+    "explicacion": "La corriente de Humboldt transporta aguas frías y favorece el afloramiento de nutrientes, contribuyendo a la alta productividad marina del litoral peruano.",
+    "dato": "La productividad marina peruana sostiene importantes cadenas alimentarias y actividades pesqueras.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2U2ZjZmNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNjdiN2M4IiBvcGFjaXR5PSIuMTYiLz4KPHBhdGggZD0iTTYwIDIzMCBDMTEwIDE2MCAxMzAgMjAwIDE3NSAxMzAgUzI1MCAxMjAgMjg1IDc1IFMzNDAgMTEwIDM3MCA1NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTY0ZTYzIiBzdHJva2Utd2lkdGg9IjE2Ii8+PHBhdGggZD0iTTU1IDI0NSBRMTcwIDE4NSAzNjUgMjM1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2N2I3YzgiIHN0cm9rZS13aWR0aD0iMjAiLz48Y2lyY2xlIGN4PSI5MCIgY3k9Ijc1IiByPSIyOCIgZmlsbD0iI2Y0Yzk1ZCIvPgo8dGV4dCB4PSIyMTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTY0ZTYzIj5Db3JyaWVudGVzIG1hcmluYXM8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Costa peruana con océano frío, afloramiento de nutrientes y fauna marina."
+  },
+  {
+    "id": 16,
+    "categoria": "Geografía",
+    "dificultad": "avanzado",
+    "pregunta": "Un mapa muestra curvas que unen puntos con la misma altitud. ¿Qué tipo de representación está utilizando?",
+    "tema": "Cartografía",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "Mapa político",
+      "Curvas de nivel",
+      "Mapa de husos horarios",
+      "Proyección cilíndrica pura"
+    ],
+    "explicacion": "Las curvas de nivel unen puntos que tienen la misma elevación y permiten representar el relieve en mapas topográficos.",
+    "dato": "La separación entre curvas de nivel ayuda a interpretar si una pendiente es más suave o más pronunciada.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2U2ZjZmNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNjdiN2M4IiBvcGFjaXR5PSIuMTYiLz4KPHBhdGggZD0iTTYwIDIzMCBDMTEwIDE2MCAxMzAgMjAwIDE3NSAxMzAgUzI1MCAxMjAgMjg1IDc1IFMzNDAgMTEwIDM3MCA1NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTY0ZTYzIiBzdHJva2Utd2lkdGg9IjE2Ii8+PHBhdGggZD0iTTU1IDI0NSBRMTcwIDE4NSAzNjUgMjM1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2N2I3YzgiIHN0cm9rZS13aWR0aD0iMjAiLz48Y2lyY2xlIGN4PSI5MCIgY3k9Ijc1IiByPSIyOCIgZmlsbD0iI2Y0Yzk1ZCIvPgo8dGV4dCB4PSIyMTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTY0ZTYzIj5DYXJ0b2dyYWbDrWE8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Mapa topográfico con curvas de nivel alrededor de una montaña, sin valores que den la respuesta."
+  },
+  {
+    "id": 17,
+    "categoria": "Geografía",
+    "dificultad": "intermedio",
+    "pregunta": "¿Por qué los terremotos son frecuentes en muchas zonas cercanas a los límites de placas tectónicas?",
+    "tema": "Placas tectónicas",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "Porque allí no existe gravedad",
+      "Porque las placas permanecen completamente inmóviles",
+      "Porque el movimiento y la interacción de las placas acumulan y liberan energía",
+      "Porque los océanos provocan todos los terremotos"
+    ],
+    "explicacion": "El movimiento relativo de las placas puede generar deformación y acumulación de tensión en las rocas. Cuando esa energía se libera, puede producirse un terremoto.",
+    "dato": "El Perú se encuentra en el Cinturón de Fuego del Pacífico y presenta actividad sísmica importante.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2U2ZjZmNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNjdiN2M4IiBvcGFjaXR5PSIuMTYiLz4KPHBhdGggZD0iTTYwIDIzMCBDMTEwIDE2MCAxMzAgMjAwIDE3NSAxMzAgUzI1MCAxMjAgMjg1IDc1IFMzNDAgMTEwIDM3MCA1NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTY0ZTYzIiBzdHJva2Utd2lkdGg9IjE2Ii8+PHBhdGggZD0iTTU1IDI0NSBRMTcwIDE4NSAzNjUgMjM1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2N2I3YzgiIHN0cm9rZS13aWR0aD0iMjAiLz48Y2lyY2xlIGN4PSI5MCIgY3k9Ijc1IiByPSIyOCIgZmlsbD0iI2Y0Yzk1ZCIvPgo8dGV4dCB4PSIyMTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTY0ZTYzIj5QbGFjYXMgdGVjdMOzbmljYXM8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Diagrama visual de dos placas tectónicas interactuando y liberando energía."
+  },
+  {
+    "id": 18,
+    "categoria": "Geografía",
+    "dificultad": "basico",
+    "pregunta": "¿Cuál es la función principal de un mapa físico?",
+    "tema": "Mapas",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "Mostrar únicamente fronteras políticas",
+      "Representar solamente población",
+      "Mostrar horarios de trenes",
+      "Representar elementos naturales del relieve y la hidrografía"
+    ],
+    "explicacion": "Los mapas físicos destacan elementos naturales como montañas, valles, ríos, lagos y otras formas del relieve.",
+    "dato": "Los mapas físicos y políticos responden a propósitos diferentes, aunque pueden combinarse.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2U2ZjZmNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNjdiN2M4IiBvcGFjaXR5PSIuMTYiLz4KPHBhdGggZD0iTTYwIDIzMCBDMTEwIDE2MCAxMzAgMjAwIDE3NSAxMzAgUzI1MCAxMjAgMjg1IDc1IFMzNDAgMTEwIDM3MCA1NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTY0ZTYzIiBzdHJva2Utd2lkdGg9IjE2Ii8+PHBhdGggZD0iTTU1IDI0NSBRMTcwIDE4NSAzNjUgMjM1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2N2I3YzgiIHN0cm9rZS13aWR0aD0iMjAiLz48Y2lyY2xlIGN4PSI5MCIgY3k9Ijc1IiByPSIyOCIgZmlsbD0iI2Y0Yzk1ZCIvPgo8dGV4dCB4PSIyMTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTY0ZTYzIj5NYXBhczwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Mapa físico estilizado con montañas, ríos, valles y costa."
+  },
+  {
+    "id": 19,
+    "categoria": "Geografía",
+    "dificultad": "intermedio",
+    "pregunta": "¿Qué proceso puede explicar la formación de un valle profundo por acción de un río durante largos periodos?",
+    "tema": "Relieve",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "La erosión fluvial",
+      "La rotación terrestre únicamente",
+      "La evaporación del océano",
+      "La formación instantánea de rocas"
+    ],
+    "explicacion": "El agua corriente puede erosionar, transportar y depositar materiales. Durante largos periodos, estos procesos pueden modificar el relieve y profundizar valles.",
+    "dato": "La erosión es un proceso gradual, aunque algunos eventos extremos pueden acelerarla.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2U2ZjZmNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNjdiN2M4IiBvcGFjaXR5PSIuMTYiLz4KPHBhdGggZD0iTTYwIDIzMCBDMTEwIDE2MCAxMzAgMjAwIDE3NSAxMzAgUzI1MCAxMjAgMjg1IDc1IFMzNDAgMTEwIDM3MCA1NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTY0ZTYzIiBzdHJva2Utd2lkdGg9IjE2Ii8+PHBhdGggZD0iTTU1IDI0NSBRMTcwIDE4NSAzNjUgMjM1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2N2I3YzgiIHN0cm9rZS13aWR0aD0iMjAiLz48Y2lyY2xlIGN4PSI5MCIgY3k9Ijc1IiByPSIyOCIgZmlsbD0iI2Y0Yzk1ZCIvPgo8dGV4dCB4PSIyMTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTY0ZTYzIj5SZWxpZXZlPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Río atravesando un valle rocoso con capas geológicas visibles."
+  },
+  {
+    "id": 20,
+    "categoria": "Geografía",
+    "dificultad": "avanzado",
+    "pregunta": "Si en un mapa a gran escala dos ciudades aparecen muy separadas, ¿qué información adicional es indispensable para calcular su distancia real?",
+    "tema": "Escala cartográfica",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "El color del mapa",
+      "La escala del mapa",
+      "El nombre del cartógrafo",
+      "La estación del año"
+    ],
+    "explicacion": "La escala establece la relación entre una distancia representada en el mapa y la distancia real. Sin ella no puede convertirse correctamente una medida del mapa en distancia terrestre.",
+    "dato": "Una escala puede expresarse de forma numérica, gráfica o verbal.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2U2ZjZmNSIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNjdiN2M4IiBvcGFjaXR5PSIuMTYiLz4KPHBhdGggZD0iTTYwIDIzMCBDMTEwIDE2MCAxMzAgMjAwIDE3NSAxMzAgUzI1MCAxMjAgMjg1IDc1IFMzNDAgMTEwIDM3MCA1NSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTY0ZTYzIiBzdHJva2Utd2lkdGg9IjE2Ii8+PHBhdGggZD0iTTU1IDI0NSBRMTcwIDE4NSAzNjUgMjM1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2N2I3YzgiIHN0cm9rZS13aWR0aD0iMjAiLz48Y2lyY2xlIGN4PSI5MCIgY3k9Ijc1IiByPSIyOCIgZmlsbD0iI2Y0Yzk1ZCIvPgo8dGV4dCB4PSIyMTAiIHk9IjI3OCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjMTY0ZTYzIj5Fc2NhbGEgY2FydG9ncsOhZmljYTwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Mapa con regla gráfica de escala y dos ciudades marcadas, sin revelar ningún resultado."
+  },
+  {
+    "id": 21,
+    "categoria": "Aritmética",
+    "dificultad": "basico",
+    "pregunta": "Un producto cuesta S/240 y tiene un descuento del 15%. ¿Cuál es su precio final?",
+    "tema": "Porcentajes",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "S/196",
+      "S/200",
+      "S/204",
+      "S/216"
+    ],
+    "explicacion": "El descuento es 240 × 0,15 = 36. Entonces el precio final es 240 − 36 = S/204.",
+    "procedimiento": "Paso 1: calcula 15% de 240: 240 × 0,15 = 36. Paso 2: resta el descuento: 240 − 36 = 204.",
+    "dato": "Para hallar el precio final con descuento también puedes multiplicar directamente por 0,85.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VkZjdlOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWFjMjdjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iOTAiIHk9IjcwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE4MCIgcng9IjIwIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMzMTU3MmMiIHN0cm9rZS13aWR0aD0iOCIvPjxyZWN0IHg9IjExNSIgeT0iOTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iNDUiIHJ4PSI4IiBmaWxsPSIjZWRmN2U4Ii8+PGNpcmNsZSBjeD0iMTM1IiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIyNDUiIGN5PSIxODAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjEzNSIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIxOTAiIGN5PSIyMjAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMjQ1IiBjeT0iMjIwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzMxNTcyYyI+UG9yY2VudGFqZXM8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Escena de tienda con un producto y una etiqueta visual de 15% de descuento, sin mostrar el precio final."
+  },
+  {
+    "id": 22,
+    "categoria": "Aritmética",
+    "dificultad": "intermedio",
+    "pregunta": "Una receta para 4 personas usa 300 g de arroz. ¿Cuánto arroz se necesita para 10 personas manteniendo la misma proporción?",
+    "tema": "Proporciones",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "600 g",
+      "750 g",
+      "800 g",
+      "900 g"
+    ],
+    "explicacion": "La cantidad por persona es 300 ÷ 4 = 75 g. Para 10 personas: 75 × 10 = 750 g.",
+    "procedimiento": "Paso 1: 300 ÷ 4 = 75 g por persona. Paso 2: 75 × 10 = 750 g.",
+    "dato": "Las proporciones permiten escalar recetas, mezclas, planos y muchas situaciones cotidianas.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VkZjdlOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWFjMjdjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iOTAiIHk9IjcwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE4MCIgcng9IjIwIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMzMTU3MmMiIHN0cm9rZS13aWR0aD0iOCIvPjxyZWN0IHg9IjExNSIgeT0iOTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iNDUiIHJ4PSI4IiBmaWxsPSIjZWRmN2U4Ii8+PGNpcmNsZSBjeD0iMTM1IiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIyNDUiIGN5PSIxODAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjEzNSIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIxOTAiIGN5PSIyMjAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMjQ1IiBjeT0iMjIwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzMxNTcyYyI+UHJvcG9yY2lvbmVzPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Ingredientes de una receta y una mesa para varias personas, con una balanza de cocina."
+  },
+  {
+    "id": 23,
+    "categoria": "Aritmética",
+    "dificultad": "avanzado",
+    "pregunta": "Un ciclista recorre 18 km en 45 minutos. Si mantiene la misma velocidad promedio, ¿cuántos kilómetros recorrerá en 2 horas?",
+    "tema": "Velocidad",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "36 km",
+      "42 km",
+      "45 km",
+      "48 km"
+    ],
+    "explicacion": "45 minutos = 0,75 horas. La velocidad es 18 ÷ 0,75 = 24 km/h. En 2 horas recorrerá 24 × 2 = 48 km.",
+    "procedimiento": "Paso 1: convierte 45 min a 0,75 h. Paso 2: 18 ÷ 0,75 = 24 km/h. Paso 3: 24 × 2 = 48 km.",
+    "dato": "En problemas de movimiento, conviene mantener consistentes las unidades de tiempo y distancia.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VkZjdlOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWFjMjdjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iOTAiIHk9IjcwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE4MCIgcng9IjIwIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMzMTU3MmMiIHN0cm9rZS13aWR0aD0iOCIvPjxyZWN0IHg9IjExNSIgeT0iOTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iNDUiIHJ4PSI4IiBmaWxsPSIjZWRmN2U4Ii8+PGNpcmNsZSBjeD0iMTM1IiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIyNDUiIGN5PSIxODAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjEzNSIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIxOTAiIGN5PSIyMjAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMjQ1IiBjeT0iMjIwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzMxNTcyYyI+VmVsb2NpZGFkPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Ciclista en una ruta con reloj y señales de distancia, sin mostrar el resultado."
+  },
+  {
+    "id": 24,
+    "categoria": "Aritmética",
+    "dificultad": "basico",
+    "pregunta": "Una tienda aumenta en 20% el precio de una mochila que costaba S/150. ¿Cuál es el nuevo precio?",
+    "tema": "Aumentos porcentuales",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "S/180",
+      "S/170",
+      "S/175",
+      "S/200"
+    ],
+    "explicacion": "El aumento es 150 × 0,20 = 30. El nuevo precio es 150 + 30 = S/180.",
+    "procedimiento": "Paso 1: calcula 20% de 150 = 30. Paso 2: suma 150 + 30 = 180.",
+    "dato": "Un aumento porcentual se calcula sobre el precio original, salvo que se indique otra base.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VkZjdlOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWFjMjdjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iOTAiIHk9IjcwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE4MCIgcng9IjIwIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMzMTU3MmMiIHN0cm9rZS13aWR0aD0iOCIvPjxyZWN0IHg9IjExNSIgeT0iOTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iNDUiIHJ4PSI4IiBmaWxsPSIjZWRmN2U4Ii8+PGNpcmNsZSBjeD0iMTM1IiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIyNDUiIGN5PSIxODAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjEzNSIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIxOTAiIGN5PSIyMjAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMjQ1IiBjeT0iMjIwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzMxNTcyYyI+QXVtZW50b3MgcG9yY2VudHVhbGVzPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Mochila en una tienda con etiqueta de aumento del 20%, sin mostrar el precio final."
+  },
+  {
+    "id": 25,
+    "categoria": "Aritmética",
+    "dificultad": "intermedio",
+    "pregunta": "El promedio de cuatro notas es 15. Si tres notas son 12, 16 y 17, ¿cuál es la cuarta nota?",
+    "tema": "Promedios",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "13",
+      "14",
+      "15",
+      "16"
+    ],
+    "explicacion": "La suma total debe ser 15 × 4 = 60. Las tres notas conocidas suman 45, por lo que la cuarta es 60 − 45 = 15.",
+    "procedimiento": "Paso 1: 15 × 4 = 60. Paso 2: 12 + 16 + 17 = 45. Paso 3: 60 − 45 = 15.",
+    "dato": "Para encontrar un dato faltante de un promedio, primero conviene hallar la suma total.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VkZjdlOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWFjMjdjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iOTAiIHk9IjcwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE4MCIgcng9IjIwIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMzMTU3MmMiIHN0cm9rZS13aWR0aD0iOCIvPjxyZWN0IHg9IjExNSIgeT0iOTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iNDUiIHJ4PSI4IiBmaWxsPSIjZWRmN2U4Ii8+PGNpcmNsZSBjeD0iMTM1IiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIyNDUiIGN5PSIxODAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjEzNSIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIxOTAiIGN5PSIyMjAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMjQ1IiBjeT0iMjIwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzMxNTcyYyI+UHJvbWVkaW9zPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Cuaderno de calificaciones y calculadora mostrando varias notas, sin revelar la cuarta."
+  },
+  {
+    "id": 26,
+    "categoria": "Aritmética",
+    "dificultad": "intermedio",
+    "pregunta": "¿Qué fracción es equivalente a 0,375?",
+    "tema": "Decimales y fracciones",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "1/4",
+      "3/8",
+      "5/8",
+      "7/16"
+    ],
+    "explicacion": "0,375 = 375/1000. Simplificando entre 125 se obtiene 3/8.",
+    "procedimiento": "Paso 1: escribe 0,375 como 375/1000. Paso 2: divide numerador y denominador entre 125. Resultado: 3/8.",
+    "dato": "Los decimales finitos pueden convertirse en fracciones usando potencias de 10 como denominador.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VkZjdlOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWFjMjdjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iOTAiIHk9IjcwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE4MCIgcng9IjIwIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMzMTU3MmMiIHN0cm9rZS13aWR0aD0iOCIvPjxyZWN0IHg9IjExNSIgeT0iOTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iNDUiIHJ4PSI4IiBmaWxsPSIjZWRmN2U4Ii8+PGNpcmNsZSBjeD0iMTM1IiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIyNDUiIGN5PSIxODAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjEzNSIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIxOTAiIGN5PSIyMjAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMjQ1IiBjeT0iMjIwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzMxNTcyYyI+RGVjaW1hbGVzIHkgZnJhY2Npb25lczwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Pizarra educativa con representación visual de un decimal mediante partes de una cuadrícula."
+  },
+  {
+    "id": 27,
+    "categoria": "Aritmética",
+    "dificultad": "avanzado",
+    "pregunta": "Un artículo recibe primero un descuento del 20% y luego un descuento adicional del 10% sobre el nuevo precio. ¿El descuento total equivale al 30% del precio original?",
+    "tema": "Porcentajes sucesivos",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "Sí, siempre equivale exactamente al 30%",
+      "No, equivale al 28% del precio original",
+      "No, equivale al 25% del precio original",
+      "Sí, porque 20% + 10% siempre es 30%"
+    ],
+    "explicacion": "Después del 20% queda el 80% del precio. Aplicar luego 10% deja el 90% de ese 80%: 0,80 × 0,90 = 0,72. Por tanto, el descuento total es 28%.",
+    "procedimiento": "Paso 1: queda 80% tras el primer descuento. Paso 2: queda 90% de ese valor. Paso 3: 0,80 × 0,90 = 0,72; se descontó 1 − 0,72 = 0,28 = 28%.",
+    "dato": "Los porcentajes sucesivos no se suman directamente cuando cada uno se aplica sobre una base diferente.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VkZjdlOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWFjMjdjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iOTAiIHk9IjcwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE4MCIgcng9IjIwIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMzMTU3MmMiIHN0cm9rZS13aWR0aD0iOCIvPjxyZWN0IHg9IjExNSIgeT0iOTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iNDUiIHJ4PSI4IiBmaWxsPSIjZWRmN2U4Ii8+PGNpcmNsZSBjeD0iMTM1IiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIyNDUiIGN5PSIxODAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjEzNSIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIxOTAiIGN5PSIyMjAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMjQ1IiBjeT0iMjIwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzMxNTcyYyI+UG9yY2VudGFqZXMgc3VjZXNpdm9zPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Carrito de compras con dos etiquetas de descuento sucesivas, sin mostrar el porcentaje final."
+  },
+  {
+    "id": 28,
+    "categoria": "Aritmética",
+    "dificultad": "basico",
+    "pregunta": "Si 5 cuadernos cuestan S/35 al mismo precio unitario, ¿cuánto cuestan 8 cuadernos?",
+    "tema": "Regla de tres",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "S/48",
+      "S/52",
+      "S/54",
+      "S/56"
+    ],
+    "explicacion": "Cada cuaderno cuesta 35 ÷ 5 = S/7. Ocho cuadernos cuestan 8 × 7 = S/56.",
+    "procedimiento": "Paso 1: 35 ÷ 5 = 7. Paso 2: 7 × 8 = 56.",
+    "dato": "La proporcionalidad directa mantiene constante la razón entre las cantidades.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VkZjdlOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWFjMjdjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iOTAiIHk9IjcwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE4MCIgcng9IjIwIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMzMTU3MmMiIHN0cm9rZS13aWR0aD0iOCIvPjxyZWN0IHg9IjExNSIgeT0iOTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iNDUiIHJ4PSI4IiBmaWxsPSIjZWRmN2U4Ii8+PGNpcmNsZSBjeD0iMTM1IiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIyNDUiIGN5PSIxODAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjEzNSIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIxOTAiIGN5PSIyMjAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMjQ1IiBjeT0iMjIwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzMxNTcyYyI+UmVnbGEgZGUgdHJlczwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Papelería con cuadernos apilados y una etiqueta de precio, sin mostrar el total buscado."
+  },
+  {
+    "id": 29,
+    "categoria": "Aritmética",
+    "dificultad": "intermedio",
+    "pregunta": "Una cantidad se duplica y luego se reduce en 25%. Comparada con la cantidad inicial, ¿cómo queda?",
+    "tema": "Operaciones porcentuales",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "Queda 50% mayor",
+      "Queda igual",
+      "Queda 25% menor",
+      "Queda 75% mayor"
+    ],
+    "explicacion": "Si la cantidad inicial es 100, al duplicarla queda en 200. Reducir 25% de 200 deja 150, que es 50% mayor que 100.",
+    "procedimiento": "Paso 1: toma 100 como referencia. Paso 2: 100 × 2 = 200. Paso 3: 200 × 0,75 = 150.",
+    "dato": "El orden de las operaciones porcentuales importa porque cada porcentaje puede tener una base distinta.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VkZjdlOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWFjMjdjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iOTAiIHk9IjcwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE4MCIgcng9IjIwIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMzMTU3MmMiIHN0cm9rZS13aWR0aD0iOCIvPjxyZWN0IHg9IjExNSIgeT0iOTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iNDUiIHJ4PSI4IiBmaWxsPSIjZWRmN2U4Ii8+PGNpcmNsZSBjeD0iMTM1IiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIyNDUiIGN5PSIxODAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjEzNSIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIxOTAiIGN5PSIyMjAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMjQ1IiBjeT0iMjIwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzMxNTcyYyI+T3BlcmFjaW9uZXMgcG9yY2VudHVhbGVzPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Gráfico de barras que muestra una cantidad aumentando y luego disminuyendo."
+  },
+  {
+    "id": 30,
+    "categoria": "Aritmética",
+    "dificultad": "avanzado",
+    "pregunta": "Un tanque tiene 3/5 de su capacidad. Después se agregan 24 litros y queda lleno. ¿Cuál es la capacidad total del tanque?",
+    "tema": "Fracciones",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "40 L",
+      "60 L",
+      "72 L",
+      "80 L"
+    ],
+    "explicacion": "Faltaba 2/5 de la capacidad. Si 2/5 equivale a 24 L, entonces 1/5 equivale a 12 L y 5/5 equivale a 60 L.",
+    "procedimiento": "Paso 1: 1 − 3/5 = 2/5. Paso 2: 2/5 = 24 L. Paso 3: 1/5 = 12 L. Paso 4: 5/5 = 60 L.",
+    "dato": "Los problemas de capacidad pueden resolverse identificando qué fracción representa la cantidad añadida.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VkZjdlOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWFjMjdjIiBvcGFjaXR5PSIuMTYiLz4KPHJlY3QgeD0iOTAiIHk9IjcwIiB3aWR0aD0iMjUwIiBoZWlnaHQ9IjE4MCIgcng9IjIwIiBmaWxsPSIjZmZmIiBzdHJva2U9IiMzMTU3MmMiIHN0cm9rZS13aWR0aD0iOCIvPjxyZWN0IHg9IjExNSIgeT0iOTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iNDUiIHJ4PSI4IiBmaWxsPSIjZWRmN2U4Ii8+PGNpcmNsZSBjeD0iMTM1IiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjE4MCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIyNDUiIGN5PSIxODAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMzAwIiBjeT0iMTgwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjEzNSIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz48Y2lyY2xlIGN4PSIxOTAiIGN5PSIyMjAiIHI9IjE1IiBmaWxsPSIjOWFjMjdjIi8+PGNpcmNsZSBjeD0iMjQ1IiBjeT0iMjIwIiByPSIxNSIgZmlsbD0iIzlhYzI3YyIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIyMCIgcj0iMTUiIGZpbGw9IiM5YWMyN2MiLz4KPHRleHQgeD0iMjEwIiB5PSIyNzgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzMxNTcyYyI+RnJhY2Npb25lczwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Tanque transparente con nivel de agua y una entrada de 24 litros, sin mostrar la capacidad final."
+  },
+  {
+    "id": 31,
+    "categoria": "Geometría",
+    "dificultad": "basico",
+    "pregunta": "Un rectángulo mide 12 cm de largo y 7 cm de ancho. ¿Cuál es su área?",
+    "tema": "Áreas",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "19 cm²",
+      "38 cm²",
+      "84 cm²",
+      "168 cm²"
+    ],
+    "explicacion": "El área de un rectángulo es largo × ancho: 12 × 7 = 84 cm².",
+    "procedimiento": "Paso 1: identifica base 12 cm y altura 7 cm. Paso 2: 12 × 7 = 84 cm².",
+    "dato": "El área mide la superficie que ocupa una figura y se expresa en unidades cuadradas.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YxZWVmOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWI4Y2MyIiBvcGFjaXR5PSIuMTYiLz4KPHBvbHlnb24gcG9pbnRzPSI3NSwyNDAgMjEwLDYwIDM0NSwyNDAiIGZpbGw9IiNmMWVlZjgiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+PGNpcmNsZSBjeD0iMjEwIiBjeT0iMTUwIiByPSI2MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWI4Y2MyIiBzdHJva2Utd2lkdGg9IjkiLz48bGluZSB4MT0iNzUiIHkxPSIyNDAiIHgyPSIzNDUiIHkyPSIyNDAiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzYjJmNjMiPsOBcmVhczwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Rectángulo con medidas 12 cm y 7 cm claramente indicadas."
+  },
+  {
+    "id": 32,
+    "categoria": "Geometría",
+    "dificultad": "intermedio",
+    "pregunta": "Un triángulo rectángulo tiene hipotenusa de 13 cm y un cateto de 5 cm. ¿Cuánto mide el otro cateto?",
+    "tema": "Teorema de Pitágoras",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "8 cm",
+      "12 cm",
+      "14 cm",
+      "18 cm"
+    ],
+    "explicacion": "Por Pitágoras: x² + 5² = 13². Entonces x² = 169 − 25 = 144 y x = 12 cm.",
+    "procedimiento": "Paso 1: x² + 25 = 169. Paso 2: x² = 144. Paso 3: x = 12 cm.",
+    "dato": "La terna 5-12-13 es un ejemplo clásico de triple pitagórico.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YxZWVmOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWI4Y2MyIiBvcGFjaXR5PSIuMTYiLz4KPHBvbHlnb24gcG9pbnRzPSI3NSwyNDAgMjEwLDYwIDM0NSwyNDAiIGZpbGw9IiNmMWVlZjgiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+PGNpcmNsZSBjeD0iMjEwIiBjeT0iMTUwIiByPSI2MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWI4Y2MyIiBzdHJva2Utd2lkdGg9IjkiLz48bGluZSB4MT0iNzUiIHkxPSIyNDAiIHgyPSIzNDUiIHkyPSIyNDAiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzYjJmNjMiPlRlb3JlbWEgZGUgUGl0w6Fnb3JhczwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Triángulo rectángulo atractivo con 13 cm en la hipotenusa y 5 cm en un cateto."
+  },
+  {
+    "id": 33,
+    "categoria": "Geometría",
+    "dificultad": "avanzado",
+    "pregunta": "Un cilindro tiene radio de 3 cm y altura de 10 cm. Usando π ≈ 3,14, ¿cuál es aproximadamente su volumen?",
+    "tema": "Volúmenes",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "94,2 cm³",
+      "188,4 cm³",
+      "282,6 cm³",
+      "314 cm³"
+    ],
+    "explicacion": "V = πr²h = 3,14 × 3² × 10 = 282,6 cm³.",
+    "procedimiento": "Paso 1: r² = 9. Paso 2: 3,14 × 9 × 10 = 282,6 cm³.",
+    "dato": "El volumen de un cilindro combina el área de su base circular con su altura.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YxZWVmOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWI4Y2MyIiBvcGFjaXR5PSIuMTYiLz4KPHBvbHlnb24gcG9pbnRzPSI3NSwyNDAgMjEwLDYwIDM0NSwyNDAiIGZpbGw9IiNmMWVlZjgiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+PGNpcmNsZSBjeD0iMjEwIiBjeT0iMTUwIiByPSI2MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWI4Y2MyIiBzdHJva2Utd2lkdGg9IjkiLz48bGluZSB4MT0iNzUiIHkxPSIyNDAiIHgyPSIzNDUiIHkyPSIyNDAiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzYjJmNjMiPlZvbMO6bWVuZXM8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Cilindro tridimensional con radio 3 cm y altura 10 cm señalados."
+  },
+  {
+    "id": 34,
+    "categoria": "Geometría",
+    "dificultad": "basico",
+    "pregunta": "Un cuadrado tiene perímetro de 36 cm. ¿Cuánto mide cada lado?",
+    "tema": "Perímetros",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "9 cm",
+      "8 cm",
+      "12 cm",
+      "18 cm"
+    ],
+    "explicacion": "Un cuadrado tiene cuatro lados iguales. Entonces 36 ÷ 4 = 9 cm.",
+    "procedimiento": "Paso 1: divide el perímetro entre los cuatro lados. 36 ÷ 4 = 9 cm.",
+    "dato": "El perímetro mide la longitud total del contorno de una figura.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YxZWVmOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWI4Y2MyIiBvcGFjaXR5PSIuMTYiLz4KPHBvbHlnb24gcG9pbnRzPSI3NSwyNDAgMjEwLDYwIDM0NSwyNDAiIGZpbGw9IiNmMWVlZjgiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+PGNpcmNsZSBjeD0iMjEwIiBjeT0iMTUwIiByPSI2MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWI4Y2MyIiBzdHJva2Utd2lkdGg9IjkiLz48bGluZSB4MT0iNzUiIHkxPSIyNDAiIHgyPSIzNDUiIHkyPSIyNDAiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzYjJmNjMiPlBlcsOtbWV0cm9zPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Cuadrado visto como plano arquitectónico sencillo con perímetro de 36 cm."
+  },
+  {
+    "id": 35,
+    "categoria": "Geometría",
+    "dificultad": "intermedio",
+    "pregunta": "Un círculo tiene radio de 5 cm. Usando π ≈ 3,14, ¿cuál es aproximadamente su área?",
+    "tema": "Circunferencia y área",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "31,4 cm²",
+      "62,8 cm²",
+      "78,5 cm²",
+      "157 cm²"
+    ],
+    "explicacion": "A = πr² = 3,14 × 25 = 78,5 cm².",
+    "procedimiento": "Paso 1: r² = 25. Paso 2: 3,14 × 25 = 78,5 cm².",
+    "dato": "La fórmula del área circular depende del cuadrado del radio, por lo que duplicar el radio cuadruplica el área.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YxZWVmOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWI4Y2MyIiBvcGFjaXR5PSIuMTYiLz4KPHBvbHlnb24gcG9pbnRzPSI3NSwyNDAgMjEwLDYwIDM0NSwyNDAiIGZpbGw9IiNmMWVlZjgiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+PGNpcmNsZSBjeD0iMjEwIiBjeT0iMTUwIiByPSI2MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWI4Y2MyIiBzdHJva2Utd2lkdGg9IjkiLz48bGluZSB4MT0iNzUiIHkxPSIyNDAiIHgyPSIzNDUiIHkyPSIyNDAiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzYjJmNjMiPkNpcmN1bmZlcmVuY2lhIHkgw6FyZWE8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Círculo con radio de 5 cm indicado visualmente."
+  },
+  {
+    "id": 36,
+    "categoria": "Geometría",
+    "dificultad": "intermedio",
+    "pregunta": "Una escalera de 10 m se apoya contra una pared y su base está a 6 m de la pared. ¿Qué altura alcanza?",
+    "tema": "Pitágoras aplicado",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "6 m",
+      "8 m",
+      "10 m",
+      "12 m"
+    ],
+    "explicacion": "La escalera es la hipotenusa: h² + 6² = 10². Entonces h² = 64 y h = 8 m.",
+    "procedimiento": "Paso 1: h² + 36 = 100. Paso 2: h² = 64. Paso 3: h = 8 m.",
+    "dato": "El teorema de Pitágoras aparece en problemas reales de construcción, diseño y medición.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YxZWVmOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWI4Y2MyIiBvcGFjaXR5PSIuMTYiLz4KPHBvbHlnb24gcG9pbnRzPSI3NSwyNDAgMjEwLDYwIDM0NSwyNDAiIGZpbGw9IiNmMWVlZjgiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+PGNpcmNsZSBjeD0iMjEwIiBjeT0iMTUwIiByPSI2MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWI4Y2MyIiBzdHJva2Utd2lkdGg9IjkiLz48bGluZSB4MT0iNzUiIHkxPSIyNDAiIHgyPSIzNDUiIHkyPSIyNDAiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzYjJmNjMiPlBpdMOhZ29yYXMgYXBsaWNhZG88L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Escalera de 10 m apoyada contra una pared, con base a 6 m de distancia."
+  },
+  {
+    "id": 37,
+    "categoria": "Geometría",
+    "dificultad": "avanzado",
+    "pregunta": "Un terreno rectangular tiene un área de 96 m² y un largo de 12 m. ¿Cuál es su perímetro?",
+    "tema": "Área y perímetro",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "40 m",
+      "32 m",
+      "48 m",
+      "56 m"
+    ],
+    "explicacion": "El ancho es 96 ÷ 12 = 8 m. El perímetro es 2(12 + 8) = 40 m.",
+    "procedimiento": "Paso 1: ancho = 96 ÷ 12 = 8 m. Paso 2: P = 2(12 + 8) = 40 m.",
+    "dato": "Conocer el área y una dimensión puede permitir hallar otra dimensión antes de calcular el perímetro.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YxZWVmOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWI4Y2MyIiBvcGFjaXR5PSIuMTYiLz4KPHBvbHlnb24gcG9pbnRzPSI3NSwyNDAgMjEwLDYwIDM0NSwyNDAiIGZpbGw9IiNmMWVlZjgiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+PGNpcmNsZSBjeD0iMjEwIiBjeT0iMTUwIiByPSI2MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWI4Y2MyIiBzdHJva2Utd2lkdGg9IjkiLz48bGluZSB4MT0iNzUiIHkxPSIyNDAiIHgyPSIzNDUiIHkyPSIyNDAiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzYjJmNjMiPsOBcmVhIHkgcGVyw61tZXRybzwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Plano de un terreno rectangular con área de 96 m² y largo de 12 m."
+  },
+  {
+    "id": 38,
+    "categoria": "Geometría",
+    "dificultad": "basico",
+    "pregunta": "Dos ángulos de un triángulo miden 50° y 60°. ¿Cuánto mide el tercero?",
+    "tema": "Ángulos",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "60°",
+      "65°",
+      "80°",
+      "70°"
+    ],
+    "explicacion": "La suma de los ángulos internos de un triángulo es 180°. 180 − 50 − 60 = 70°.",
+    "procedimiento": "Paso 1: suma 50° + 60° = 110°. Paso 2: 180° − 110° = 70°.",
+    "dato": "La suma de los ángulos interiores de cualquier triángulo euclidiano es 180°.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YxZWVmOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWI4Y2MyIiBvcGFjaXR5PSIuMTYiLz4KPHBvbHlnb24gcG9pbnRzPSI3NSwyNDAgMjEwLDYwIDM0NSwyNDAiIGZpbGw9IiNmMWVlZjgiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+PGNpcmNsZSBjeD0iMjEwIiBjeT0iMTUwIiByPSI2MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWI4Y2MyIiBzdHJva2Utd2lkdGg9IjkiLz48bGluZSB4MT0iNzUiIHkxPSIyNDAiIHgyPSIzNDUiIHkyPSIyNDAiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzYjJmNjMiPsOBbmd1bG9zPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Triángulo con dos ángulos marcados como 50° y 60°, dejando el tercero sin valor."
+  },
+  {
+    "id": 39,
+    "categoria": "Geometría",
+    "dificultad": "intermedio",
+    "pregunta": "Un prisma rectangular mide 4 m de largo, 3 m de ancho y 2 m de alto. ¿Cuál es su volumen?",
+    "tema": "Volúmenes",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "9 m³",
+      "12 m³",
+      "24 m³",
+      "36 m³"
+    ],
+    "explicacion": "V = largo × ancho × altura = 4 × 3 × 2 = 24 m³.",
+    "procedimiento": "Paso 1: 4 × 3 = 12. Paso 2: 12 × 2 = 24 m³.",
+    "dato": "El volumen de un prisma rectangular puede entenderse como la cantidad de cubos unitarios que caben en él.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YxZWVmOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWI4Y2MyIiBvcGFjaXR5PSIuMTYiLz4KPHBvbHlnb24gcG9pbnRzPSI3NSwyNDAgMjEwLDYwIDM0NSwyNDAiIGZpbGw9IiNmMWVlZjgiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+PGNpcmNsZSBjeD0iMjEwIiBjeT0iMTUwIiByPSI2MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWI4Y2MyIiBzdHJva2Utd2lkdGg9IjkiLz48bGluZSB4MT0iNzUiIHkxPSIyNDAiIHgyPSIzNDUiIHkyPSIyNDAiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzYjJmNjMiPlZvbMO6bWVuZXM8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Prisma rectangular tridimensional con dimensiones 4 m, 3 m y 2 m."
+  },
+  {
+    "id": 40,
+    "categoria": "Geometría",
+    "dificultad": "avanzado",
+    "pregunta": "Un círculo está inscrito en un cuadrado de lado 10 cm. ¿Cuál es el área aproximada del espacio del cuadrado que queda fuera del círculo? Usa π ≈ 3,14.",
+    "tema": "Figuras compuestas",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "20,5 cm²",
+      "21,5 cm²",
+      "31,4 cm²",
+      "68,6 cm²"
+    ],
+    "explicacion": "Área del cuadrado = 100 cm². El diámetro del círculo es 10 cm, así que su radio es 5 cm y su área ≈ 78,5 cm². La diferencia es 21,5 cm².",
+    "procedimiento": "Paso 1: cuadrado = 10 × 10 = 100. Paso 2: círculo = 3,14 × 5² = 78,5. Paso 3: 100 − 78,5 = 21,5 cm².",
+    "dato": "Las figuras compuestas suelen resolverse separando la región en áreas conocidas.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2YxZWVmOCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjOWI4Y2MyIiBvcGFjaXR5PSIuMTYiLz4KPHBvbHlnb24gcG9pbnRzPSI3NSwyNDAgMjEwLDYwIDM0NSwyNDAiIGZpbGw9IiNmMWVlZjgiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+PGNpcmNsZSBjeD0iMjEwIiBjeT0iMTUwIiByPSI2MiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWI4Y2MyIiBzdHJva2Utd2lkdGg9IjkiLz48bGluZSB4MT0iNzUiIHkxPSIyNDAiIHgyPSIzNDUiIHkyPSIyNDAiIHN0cm9rZT0iIzNiMmY2MyIgc3Ryb2tlLXdpZHRoPSI5Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMzYjJmNjMiPkZpZ3VyYXMgY29tcHVlc3RhczwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Cuadrado de lado 10 cm con un círculo perfectamente inscrito, sin mostrar el área restante."
+  },
+  {
+    "id": 41,
+    "categoria": "Biología",
+    "dificultad": "basico",
+    "pregunta": "¿Qué función cumplen principalmente las mitocondrias en las células eucariotas?",
+    "tema": "Célula",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "Almacenar información genética exclusivamente",
+      "Fabricar la pared celular",
+      "Participar en la producción de energía utilizable para la célula",
+      "Controlar directamente todos los movimientos del organismo"
+    ],
+    "explicacion": "Las mitocondrias participan en la respiración celular y en la producción de ATP, una molécula fundamental para transferir energía utilizable.",
+    "dato": "Las mitocondrias poseen su propio ADN y membranas internas especializadas.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VhZjdlYyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNzBiNzdlIiBvcGFjaXR5PSIuMTYiLz4KPGNpcmNsZSBjeD0iMjEwIiBjeT0iMTYwIiByPSIxMDUiIGZpbGw9IiNlYWY3ZWMiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+PGVsbGlwc2UgY3g9IjIxMCIgY3k9IjE2MCIgcng9IjU1IiByeT0iNDUiIGZpbGw9IiM3MGI3N2UiLz48cGF0aCBkPSJNMTIwIDEzMCBDMTYwIDgwIDE4MCAxMjUgMjA1IDk1IFMyNjAgMTI1IDMwMCAxMDAgTTEyNSAxOTAgQzE2NSAyMjUgMTg1IDE3MCAyMjAgMjE1IFMyNzUgMTg1IDMwMCAyMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNDUzMmQiPkPDqWx1bGE8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Ilustración científica de una célula animal con una mitocondria destacada."
+  },
+  {
+    "id": 42,
+    "categoria": "Biología",
+    "dificultad": "intermedio",
+    "pregunta": "¿Por qué una mutación en el ADN puede tener efectos diferentes dependiendo del lugar donde ocurra?",
+    "tema": "Genética",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "Porque puede afectar regiones o genes con funciones distintas",
+      "Porque todas las mutaciones producen enfermedades",
+      "Porque el ADN tiene la misma función en todas sus regiones",
+      "Porque una mutación siempre cambia todo el organismo"
+    ],
+    "explicacion": "Las regiones del ADN cumplen funciones diferentes. Una alteración puede no tener efecto apreciable, modificar una proteína, afectar la regulación de un gen o producir otros resultados.",
+    "dato": "No todas las mutaciones son perjudiciales; algunas son neutras y otras pueden resultar beneficiosas en determinados contextos.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VhZjdlYyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNzBiNzdlIiBvcGFjaXR5PSIuMTYiLz4KPGNpcmNsZSBjeD0iMjEwIiBjeT0iMTYwIiByPSIxMDUiIGZpbGw9IiNlYWY3ZWMiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+PGVsbGlwc2UgY3g9IjIxMCIgY3k9IjE2MCIgcng9IjU1IiByeT0iNDUiIGZpbGw9IiM3MGI3N2UiLz48cGF0aCBkPSJNMTIwIDEzMCBDMTYwIDgwIDE4MCAxMjUgMjA1IDk1IFMyNjAgMTI1IDMwMCAxMDAgTTEyNSAxOTAgQzE2NSAyMjUgMTg1IDE3MCAyMjAgMjE1IFMyNzUgMTg1IDMwMCAyMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNDUzMmQiPkdlbsOpdGljYTwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Doble hélice de ADN con una pequeña variación resaltada y un entorno celular."
+  },
+  {
+    "id": 43,
+    "categoria": "Biología",
+    "dificultad": "avanzado",
+    "pregunta": "En una cadena alimentaria, ¿qué podría ocurrir si disminuye mucho la población de un depredador principal?",
+    "tema": "Ecosistemas",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "Los productores desaparecen siempre de inmediato",
+      "No cambia ninguna población",
+      "Toda la energía del ecosistema aumenta",
+      "Pueden aumentar algunas presas y producirse efectos en otros niveles tróficos"
+    ],
+    "explicacion": "Al disminuir un depredador, algunas de sus presas pueden aumentar. Ese cambio puede afectar a organismos que esas presas consumen y generar efectos en cascada.",
+    "dato": "Las redes tróficas muestran que los ecosistemas tienen múltiples relaciones alimentarias, no solo cadenas lineales.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VhZjdlYyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNzBiNzdlIiBvcGFjaXR5PSIuMTYiLz4KPGNpcmNsZSBjeD0iMjEwIiBjeT0iMTYwIiByPSIxMDUiIGZpbGw9IiNlYWY3ZWMiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+PGVsbGlwc2UgY3g9IjIxMCIgY3k9IjE2MCIgcng9IjU1IiByeT0iNDUiIGZpbGw9IiM3MGI3N2UiLz48cGF0aCBkPSJNMTIwIDEzMCBDMTYwIDgwIDE4MCAxMjUgMjA1IDk1IFMyNjAgMTI1IDMwMCAxMDAgTTEyNSAxOTAgQzE2NSAyMjUgMTg1IDE3MCAyMjAgMjE1IFMyNzUgMTg1IDMwMCAyMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNDUzMmQiPkVjb3Npc3RlbWFzPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Red alimentaria de un ecosistema con depredador, presas, plantas y flechas de flujo."
+  },
+  {
+    "id": 44,
+    "categoria": "Biología",
+    "dificultad": "basico",
+    "pregunta": "¿Qué gas utilizan las plantas como materia prima para la fotosíntesis?",
+    "tema": "Fotosíntesis",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "Oxígeno",
+      "Dióxido de carbono",
+      "Nitrógeno molecular",
+      "Helio"
+    ],
+    "explicacion": "Las plantas utilizan dióxido de carbono y agua, junto con energía luminosa, para producir materia orgánica durante la fotosíntesis.",
+    "dato": "La fotosíntesis libera oxígeno como uno de sus productos en las plantas y algas fotosintéticas.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VhZjdlYyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNzBiNzdlIiBvcGFjaXR5PSIuMTYiLz4KPGNpcmNsZSBjeD0iMjEwIiBjeT0iMTYwIiByPSIxMDUiIGZpbGw9IiNlYWY3ZWMiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+PGVsbGlwc2UgY3g9IjIxMCIgY3k9IjE2MCIgcng9IjU1IiByeT0iNDUiIGZpbGw9IiM3MGI3N2UiLz48cGF0aCBkPSJNMTIwIDEzMCBDMTYwIDgwIDE4MCAxMjUgMjA1IDk1IFMyNjAgMTI1IDMwMCAxMDAgTTEyNSAxOTAgQzE2NSAyMjUgMTg1IDE3MCAyMjAgMjE1IFMyNzUgMTg1IDMwMCAyMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNDUzMmQiPkZvdG9zw61udGVzaXM8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Hoja verde iluminada por el sol con intercambio de gases representado de forma visual."
+  },
+  {
+    "id": 45,
+    "categoria": "Biología",
+    "dificultad": "intermedio",
+    "pregunta": "¿Qué relación existe entre el ADN, los genes y las proteínas?",
+    "tema": "Expresión genética",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "Son exactamente la misma estructura",
+      "Los genes son proteínas y el ADN es un lípido",
+      "Los genes son regiones de ADN que contienen información relacionada con productos funcionales, como proteínas",
+      "Las proteínas contienen todos los genes"
+    ],
+    "explicacion": "Los genes son segmentos de ADN que contienen información funcional. La expresión de muchos genes participa en la producción de proteínas, aunque no todos los genes codifican proteínas.",
+    "dato": "La expresión genética está regulada y puede variar según el tipo celular y las condiciones del organismo.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VhZjdlYyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNzBiNzdlIiBvcGFjaXR5PSIuMTYiLz4KPGNpcmNsZSBjeD0iMjEwIiBjeT0iMTYwIiByPSIxMDUiIGZpbGw9IiNlYWY3ZWMiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+PGVsbGlwc2UgY3g9IjIxMCIgY3k9IjE2MCIgcng9IjU1IiByeT0iNDUiIGZpbGw9IiM3MGI3N2UiLz48cGF0aCBkPSJNMTIwIDEzMCBDMTYwIDgwIDE4MCAxMjUgMjA1IDk1IFMyNjAgMTI1IDMwMCAxMDAgTTEyNSAxOTAgQzE2NSAyMjUgMTg1IDE3MCAyMjAgMjE1IFMyNzUgMTg1IDMwMCAyMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNDUzMmQiPkV4cHJlc2nDs24gZ2Vuw6l0aWNhPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Esquema educativo ADN → gen → ARN → proteína, sin texto de respuesta."
+  },
+  {
+    "id": 46,
+    "categoria": "Biología",
+    "dificultad": "intermedio",
+    "pregunta": "¿Qué ventaja ofrece la reproducción sexual para una población?",
+    "tema": "Reproducción",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "Genera mayor variabilidad genética entre descendientes",
+      "Produce descendientes genéticamente idénticos siempre",
+      "Elimina todas las mutaciones",
+      "Evita cualquier adaptación"
+    ],
+    "explicacion": "La combinación de material genético de dos progenitores genera nuevas combinaciones de variantes, aumentando la variabilidad genética de la población.",
+    "dato": "La variabilidad genética es importante para la evolución y la capacidad de las poblaciones de responder a cambios ambientales.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VhZjdlYyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNzBiNzdlIiBvcGFjaXR5PSIuMTYiLz4KPGNpcmNsZSBjeD0iMjEwIiBjeT0iMTYwIiByPSIxMDUiIGZpbGw9IiNlYWY3ZWMiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+PGVsbGlwc2UgY3g9IjIxMCIgY3k9IjE2MCIgcng9IjU1IiByeT0iNDUiIGZpbGw9IiM3MGI3N2UiLz48cGF0aCBkPSJNMTIwIDEzMCBDMTYwIDgwIDE4MCAxMjUgMjA1IDk1IFMyNjAgMTI1IDMwMCAxMDAgTTEyNSAxOTAgQzE2NSAyMjUgMTg1IDE3MCAyMjAgMjE1IFMyNzUgMTg1IDMwMCAyMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNDUzMmQiPlJlcHJvZHVjY2nDs248L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Ilustración educativa de gametos y combinación de material genético."
+  },
+  {
+    "id": 47,
+    "categoria": "Biología",
+    "dificultad": "avanzado",
+    "pregunta": "Si una población de bacterias se expone repetidamente a un antibiótico y sobreviven algunas con resistencia, ¿qué proceso puede favorecer que la resistencia se vuelva más común?",
+    "tema": "Evolución y selección",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "La fotosíntesis",
+      "La selección natural",
+      "La evaporación",
+      "La digestión"
+    ],
+    "explicacion": "Si existen variantes resistentes y el antibiótico elimina preferentemente a las sensibles, las resistentes pueden sobrevivir y reproducirse más, aumentando su frecuencia en la población.",
+    "dato": "El uso inadecuado de antibióticos puede favorecer la selección de bacterias resistentes.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VhZjdlYyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNzBiNzdlIiBvcGFjaXR5PSIuMTYiLz4KPGNpcmNsZSBjeD0iMjEwIiBjeT0iMTYwIiByPSIxMDUiIGZpbGw9IiNlYWY3ZWMiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+PGVsbGlwc2UgY3g9IjIxMCIgY3k9IjE2MCIgcng9IjU1IiByeT0iNDUiIGZpbGw9IiM3MGI3N2UiLz48cGF0aCBkPSJNMTIwIDEzMCBDMTYwIDgwIDE4MCAxMjUgMjA1IDk1IFMyNjAgMTI1IDMwMCAxMDAgTTEyNSAxOTAgQzE2NSAyMjUgMTg1IDE3MCAyMjAgMjE1IFMyNzUgMTg1IDMwMCAyMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNDUzMmQiPkV2b2x1Y2nDs24geSBzZWxlY2Npw7NuPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Microscopía estilizada de bacterias con algunas sobreviviendo a una presión ambiental."
+  },
+  {
+    "id": 48,
+    "categoria": "Biología",
+    "dificultad": "basico",
+    "pregunta": "¿Qué estructura celular contiene el material genético en el núcleo de una célula eucariota?",
+    "tema": "Célula",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "Ribosoma",
+      "Vacuola",
+      "Membrana celular",
+      "Cromatina"
+    ],
+    "explicacion": "En el núcleo eucariota, el ADN se encuentra asociado a proteínas formando cromatina; durante la división celular se condensa en cromosomas.",
+    "dato": "La cromatina puede cambiar su grado de compactación según la actividad y el estado de la célula.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VhZjdlYyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNzBiNzdlIiBvcGFjaXR5PSIuMTYiLz4KPGNpcmNsZSBjeD0iMjEwIiBjeT0iMTYwIiByPSIxMDUiIGZpbGw9IiNlYWY3ZWMiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+PGVsbGlwc2UgY3g9IjIxMCIgY3k9IjE2MCIgcng9IjU1IiByeT0iNDUiIGZpbGw9IiM3MGI3N2UiLz48cGF0aCBkPSJNMTIwIDEzMCBDMTYwIDgwIDE4MCAxMjUgMjA1IDk1IFMyNjAgMTI1IDMwMCAxMDAgTTEyNSAxOTAgQzE2NSAyMjUgMTg1IDE3MCAyMjAgMjE1IFMyNzUgMTg1IDMwMCAyMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNDUzMmQiPkPDqWx1bGE8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Núcleo celular ampliado con cromatina representada como material filamentoso."
+  },
+  {
+    "id": 49,
+    "categoria": "Biología",
+    "dificultad": "intermedio",
+    "pregunta": "¿Por qué los descomponedores son importantes en un ecosistema?",
+    "tema": "Ciclos de materia",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "Porque producen toda la luz del ecosistema",
+      "Porque eliminan la energía del Sol",
+      "Porque ayudan a reciclar nutrientes a partir de materia orgánica",
+      "Porque impiden que exista cualquier otro organismo"
+    ],
+    "explicacion": "Hongos, bacterias y otros descomponedores transforman materia orgánica y contribuyen a devolver nutrientes al ambiente, donde pueden volver a ser utilizados por productores.",
+    "dato": "La materia circula entre componentes vivos y no vivos del ecosistema, mientras que la energía fluye y se disipa.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VhZjdlYyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNzBiNzdlIiBvcGFjaXR5PSIuMTYiLz4KPGNpcmNsZSBjeD0iMjEwIiBjeT0iMTYwIiByPSIxMDUiIGZpbGw9IiNlYWY3ZWMiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+PGVsbGlwc2UgY3g9IjIxMCIgY3k9IjE2MCIgcng9IjU1IiByeT0iNDUiIGZpbGw9IiM3MGI3N2UiLz48cGF0aCBkPSJNMTIwIDEzMCBDMTYwIDgwIDE4MCAxMjUgMjA1IDk1IFMyNjAgMTI1IDMwMCAxMDAgTTEyNSAxOTAgQzE2NSAyMjUgMTg1IDE3MCAyMjAgMjE1IFMyNzUgMTg1IDMwMCAyMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNDUzMmQiPkNpY2xvcyBkZSBtYXRlcmlhPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Suelo de bosque con hojas en descomposición, hongos, bacterias representadas microscópicamente y plantas."
+  },
+  {
+    "id": 50,
+    "categoria": "Biología",
+    "dificultad": "avanzado",
+    "pregunta": "Una planta recibe luz pero sus hojas están cerradas o con los estomas poco abiertos. ¿Qué proceso podría verse limitado directamente por una menor entrada de CO₂?",
+    "tema": "Fotosíntesis",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "La fijación de carbono en la fotosíntesis",
+      "La producción de sonido",
+      "La formación de huesos",
+      "La digestión de proteínas animales"
+    ],
+    "explicacion": "Los estomas permiten el intercambio gaseoso. Si entra menos CO₂, puede limitarse la fijación de carbono en las reacciones que producen materia orgánica durante la fotosíntesis.",
+    "dato": "Los estomas también ayudan a regular la pérdida de agua de las plantas.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2VhZjdlYyIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjNzBiNzdlIiBvcGFjaXR5PSIuMTYiLz4KPGNpcmNsZSBjeD0iMjEwIiBjeT0iMTYwIiByPSIxMDUiIGZpbGw9IiNlYWY3ZWMiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+PGVsbGlwc2UgY3g9IjIxMCIgY3k9IjE2MCIgcng9IjU1IiByeT0iNDUiIGZpbGw9IiM3MGI3N2UiLz48cGF0aCBkPSJNMTIwIDEzMCBDMTYwIDgwIDE4MCAxMjUgMjA1IDk1IFMyNjAgMTI1IDMwMCAxMDAgTTEyNSAxOTAgQzE2NSAyMjUgMTg1IDE3MCAyMjAgMjE1IFMyNzUgMTg1IDMwMCAyMjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzE0NTMyZCIgc3Ryb2tlLXdpZHRoPSI4Ii8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMxNDUzMmQiPkZvdG9zw61udGVzaXM8L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Hoja vista de cerca con estomas y entrada de dióxido de carbono representada de forma educativa."
+  },
+  {
+    "id": 51,
+    "categoria": "Anatomía",
+    "dificultad": "basico",
+    "pregunta": "¿Qué función cumple principalmente el sistema óseo además de sostener el cuerpo?",
+    "tema": "Sistema óseo",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "Producir todos los impulsos nerviosos",
+      "Proteger órganos internos y servir como reserva de minerales",
+      "Bombear sangre",
+      "Realizar la digestión"
+    ],
+    "explicacion": "El esqueleto sostiene y protege órganos, participa en el movimiento y almacena minerales como calcio y fósforo. La médula ósea también participa en la formación de células sanguíneas.",
+    "dato": "Los huesos son tejidos vivos que se remodelan constantemente.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZjBmMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZTc5YTlhIiBvcGFjaXR5PSIuMTYiLz4KPGVsbGlwc2UgY3g9IjIxMCIgY3k9IjkwIiByeD0iNDUiIHJ5PSI0OCIgZmlsbD0iI2ZmZjBmMCIgc3Ryb2tlPSIjN2YxZDFkIiBzdHJva2Utd2lkdGg9IjciLz48cGF0aCBkPSJNMTcwIDEzNSBRMjEwIDExNSAyNTAgMTM1IEwyODUgMjM1IFEyMTAgMjc1IDEzNSAyMzVaIiBmaWxsPSIjZmZmMGYwIiBzdHJva2U9IiM3ZjFkMWQiIHN0cm9rZS13aWR0aD0iOCIvPjxwYXRoIGQ9Ik0xODAgMTQ1IEwxNTAgMjE1IE0yNDAgMTQ1IEwyNzAgMjE1IiBzdHJva2U9IiNlNzlhOWEiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSIxODAiIHI9IjI1IiBmaWxsPSIjZTc5YTlhIi8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPlNpc3RlbWEgw7NzZW88L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Ilustración anatómica del esqueleto humano con órganos protegidos en el tórax."
+  },
+  {
+    "id": 52,
+    "categoria": "Anatomía",
+    "dificultad": "intermedio",
+    "pregunta": "¿Qué recorrido describe correctamente la circulación pulmonar?",
+    "tema": "Sistema circulatorio",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "Pulmones → cuerpo → corazón → pulmones",
+      "Corazón izquierdo → cuerpo → corazón derecho",
+      "Corazón derecho → pulmones → corazón izquierdo",
+      "Estómago → pulmones → corazón derecho"
+    ],
+    "explicacion": "La circulación pulmonar lleva sangre desde el lado derecho del corazón hacia los pulmones para el intercambio gaseoso y retorna al lado izquierdo del corazón.",
+    "dato": "La circulación sistémica lleva luego sangre oxigenada desde el corazón izquierdo hacia los tejidos.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZjBmMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZTc5YTlhIiBvcGFjaXR5PSIuMTYiLz4KPGVsbGlwc2UgY3g9IjIxMCIgY3k9IjkwIiByeD0iNDUiIHJ5PSI0OCIgZmlsbD0iI2ZmZjBmMCIgc3Ryb2tlPSIjN2YxZDFkIiBzdHJva2Utd2lkdGg9IjciLz48cGF0aCBkPSJNMTcwIDEzNSBRMjEwIDExNSAyNTAgMTM1IEwyODUgMjM1IFEyMTAgMjc1IDEzNSAyMzVaIiBmaWxsPSIjZmZmMGYwIiBzdHJva2U9IiM3ZjFkMWQiIHN0cm9rZS13aWR0aD0iOCIvPjxwYXRoIGQ9Ik0xODAgMTQ1IEwxNTAgMjE1IE0yNDAgMTQ1IEwyNzAgMjE1IiBzdHJva2U9IiNlNzlhOWEiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSIxODAiIHI9IjI1IiBmaWxsPSIjZTc5YTlhIi8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPlNpc3RlbWEgY2lyY3VsYXRvcmlvPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Diagrama educativo del corazón y pulmones con flechas del circuito pulmonar, sin texto de respuesta."
+  },
+  {
+    "id": 53,
+    "categoria": "Anatomía",
+    "dificultad": "avanzado",
+    "pregunta": "¿Por qué el intercambio de gases ocurre con eficiencia en los alvéolos pulmonares?",
+    "tema": "Sistema respiratorio",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "Porque tienen gran superficie, paredes delgadas y están rodeados de capilares",
+      "Porque no tienen contacto con la sangre",
+      "Porque están hechos de hueso",
+      "Porque almacenan alimentos"
+    ],
+    "explicacion": "Los alvéolos ofrecen una gran superficie de intercambio y una barrera muy delgada entre el aire y la sangre, además de una extensa red capilar.",
+    "dato": "Millones de alvéolos contribuyen a una enorme superficie de intercambio en los pulmones.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZjBmMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZTc5YTlhIiBvcGFjaXR5PSIuMTYiLz4KPGVsbGlwc2UgY3g9IjIxMCIgY3k9IjkwIiByeD0iNDUiIHJ5PSI0OCIgZmlsbD0iI2ZmZjBmMCIgc3Ryb2tlPSIjN2YxZDFkIiBzdHJva2Utd2lkdGg9IjciLz48cGF0aCBkPSJNMTcwIDEzNSBRMjEwIDExNSAyNTAgMTM1IEwyODUgMjM1IFEyMTAgMjc1IDEzNSAyMzVaIiBmaWxsPSIjZmZmMGYwIiBzdHJva2U9IiM3ZjFkMWQiIHN0cm9rZS13aWR0aD0iOCIvPjxwYXRoIGQ9Ik0xODAgMTQ1IEwxNTAgMjE1IE0yNDAgMTQ1IEwyNzAgMjE1IiBzdHJva2U9IiNlNzlhOWEiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSIxODAiIHI9IjI1IiBmaWxsPSIjZTc5YTlhIi8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPlNpc3RlbWEgcmVzcGlyYXRvcmlvPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Acercamiento científico a alvéolos pulmonares rodeados de capilares."
+  },
+  {
+    "id": 54,
+    "categoria": "Anatomía",
+    "dificultad": "basico",
+    "pregunta": "¿Qué órgano produce la mayor parte de la bilis que ayuda a la digestión de las grasas?",
+    "tema": "Sistema digestivo",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "Estómago",
+      "Páncreas",
+      "Intestino grueso",
+      "Hígado"
+    ],
+    "explicacion": "El hígado produce la bilis, que ayuda a emulsificar las grasas y facilita su digestión. La bilis se almacena y concentra principalmente en la vesícula biliar.",
+    "dato": "El hígado realiza muchas otras funciones metabólicas y de procesamiento de sustancias.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZjBmMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZTc5YTlhIiBvcGFjaXR5PSIuMTYiLz4KPGVsbGlwc2UgY3g9IjIxMCIgY3k9IjkwIiByeD0iNDUiIHJ5PSI0OCIgZmlsbD0iI2ZmZjBmMCIgc3Ryb2tlPSIjN2YxZDFkIiBzdHJva2Utd2lkdGg9IjciLz48cGF0aCBkPSJNMTcwIDEzNSBRMjEwIDExNSAyNTAgMTM1IEwyODUgMjM1IFEyMTAgMjc1IDEzNSAyMzVaIiBmaWxsPSIjZmZmMGYwIiBzdHJva2U9IiM3ZjFkMWQiIHN0cm9rZS13aWR0aD0iOCIvPjxwYXRoIGQ9Ik0xODAgMTQ1IEwxNTAgMjE1IE0yNDAgMTQ1IEwyNzAgMjE1IiBzdHJva2U9IiNlNzlhOWEiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSIxODAiIHI9IjI1IiBmaWxsPSIjZTc5YTlhIi8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPlNpc3RlbWEgZGlnZXN0aXZvPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Ilustración anatómica del sistema digestivo con el hígado destacado."
+  },
+  {
+    "id": 55,
+    "categoria": "Anatomía",
+    "dificultad": "intermedio",
+    "pregunta": "¿Qué estructura conecta el sistema nervioso central con muchas partes del cuerpo mediante nervios periféricos?",
+    "tema": "Sistema nervioso",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "La epidermis",
+      "La médula espinal",
+      "El fémur",
+      "El estómago"
+    ],
+    "explicacion": "La médula espinal forma parte del sistema nervioso central y funciona como una vía importante de comunicación entre el encéfalo y el resto del cuerpo a través de los nervios espinales.",
+    "dato": "La médula espinal también participa en respuestas reflejas rápidas.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZjBmMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZTc5YTlhIiBvcGFjaXR5PSIuMTYiLz4KPGVsbGlwc2UgY3g9IjIxMCIgY3k9IjkwIiByeD0iNDUiIHJ5PSI0OCIgZmlsbD0iI2ZmZjBmMCIgc3Ryb2tlPSIjN2YxZDFkIiBzdHJva2Utd2lkdGg9IjciLz48cGF0aCBkPSJNMTcwIDEzNSBRMjEwIDExNSAyNTAgMTM1IEwyODUgMjM1IFEyMTAgMjc1IDEzNSAyMzVaIiBmaWxsPSIjZmZmMGYwIiBzdHJva2U9IiM3ZjFkMWQiIHN0cm9rZS13aWR0aD0iOCIvPjxwYXRoIGQ9Ik0xODAgMTQ1IEwxNTAgMjE1IE0yNDAgMTQ1IEwyNzAgMjE1IiBzdHJva2U9IiNlNzlhOWEiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSIxODAiIHI9IjI1IiBmaWxsPSIjZTc5YTlhIi8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPlNpc3RlbWEgbmVydmlvc288L3RleHQ+Cjwvc3ZnPg==",
+    "textoAlternativo": "Vista anatómica de encéfalo y médula espinal con nervios periféricos."
+  },
+  {
+    "id": 56,
+    "categoria": "Anatomía",
+    "dificultad": "intermedio",
+    "pregunta": "¿Qué ocurre con el diafragma durante una inspiración normal?",
+    "tema": "Respiración",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "Se relaja y sube para reducir el volumen torácico",
+      "Se convierte en hueso",
+      "Se contrae y desciende, aumentando el volumen de la cavidad torácica",
+      "Deja de moverse"
+    ],
+    "explicacion": "Durante una inspiración normal, el diafragma se contrae y desciende. Esto aumenta el volumen de la cavidad torácica y favorece la entrada de aire.",
+    "dato": "El diafragma es un músculo fundamental de la ventilación pulmonar.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZjBmMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZTc5YTlhIiBvcGFjaXR5PSIuMTYiLz4KPGVsbGlwc2UgY3g9IjIxMCIgY3k9IjkwIiByeD0iNDUiIHJ5PSI0OCIgZmlsbD0iI2ZmZjBmMCIgc3Ryb2tlPSIjN2YxZDFkIiBzdHJva2Utd2lkdGg9IjciLz48cGF0aCBkPSJNMTcwIDEzNSBRMjEwIDExNSAyNTAgMTM1IEwyODUgMjM1IFEyMTAgMjc1IDEzNSAyMzVaIiBmaWxsPSIjZmZmMGYwIiBzdHJva2U9IiM3ZjFkMWQiIHN0cm9rZS13aWR0aD0iOCIvPjxwYXRoIGQ9Ik0xODAgMTQ1IEwxNTAgMjE1IE0yNDAgMTQ1IEwyNzAgMjE1IiBzdHJva2U9IiNlNzlhOWEiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSIxODAiIHI9IjI1IiBmaWxsPSIjZTc5YTlhIi8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPlJlc3BpcmFjacOzbjwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Diagrama del tórax mostrando el diafragma en inspiración, con flechas de movimiento."
+  },
+  {
+    "id": 57,
+    "categoria": "Anatomía",
+    "dificultad": "avanzado",
+    "pregunta": "¿Por qué la sangre que sale del ventrículo izquierdo tiene que recorrer una pared muscular especialmente gruesa?",
+    "tema": "Corazón",
+    "respuestaCorrecta": 0,
+    "opciones": [
+      "Porque debe generar suficiente presión para impulsar sangre por la circulación sistémica",
+      "Porque solo bombea hacia los pulmones",
+      "Porque no contiene sangre",
+      "Porque su función es almacenar oxígeno"
+    ],
+    "explicacion": "El ventrículo izquierdo impulsa sangre a todo el cuerpo mediante la circulación sistémica, por lo que necesita generar una presión elevada y tiene una pared muscular gruesa.",
+    "dato": "El ventrículo derecho bombea hacia los pulmones y trabaja contra una resistencia menor.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZjBmMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZTc5YTlhIiBvcGFjaXR5PSIuMTYiLz4KPGVsbGlwc2UgY3g9IjIxMCIgY3k9IjkwIiByeD0iNDUiIHJ5PSI0OCIgZmlsbD0iI2ZmZjBmMCIgc3Ryb2tlPSIjN2YxZDFkIiBzdHJva2Utd2lkdGg9IjciLz48cGF0aCBkPSJNMTcwIDEzNSBRMjEwIDExNSAyNTAgMTM1IEwyODUgMjM1IFEyMTAgMjc1IDEzNSAyMzVaIiBmaWxsPSIjZmZmMGYwIiBzdHJva2U9IiM3ZjFkMWQiIHN0cm9rZS13aWR0aD0iOCIvPjxwYXRoIGQ9Ik0xODAgMTQ1IEwxNTAgMjE1IE0yNDAgMTQ1IEwyNzAgMjE1IiBzdHJva2U9IiNlNzlhOWEiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSIxODAiIHI9IjI1IiBmaWxsPSIjZTc5YTlhIi8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPkNvcmF6w7NuPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Corte anatómico del corazón comparando visualmente el grosor de los ventrículos."
+  },
+  {
+    "id": 58,
+    "categoria": "Anatomía",
+    "dificultad": "basico",
+    "pregunta": "¿Qué articulación permite principalmente los movimientos de flexión y extensión del codo?",
+    "tema": "Sistema articular",
+    "respuestaCorrecta": 3,
+    "opciones": [
+      "La articulación del cráneo",
+      "La articulación entre costillas",
+      "La articulación de la mandíbula",
+      "La articulación del codo"
+    ],
+    "explicacion": "El codo es una articulación que permite principalmente flexión y extensión del antebrazo respecto al brazo, aunque también participa en otros movimientos del miembro superior.",
+    "dato": "El codo involucra principalmente el húmero, el radio y el cúbito o ulna.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZjBmMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZTc5YTlhIiBvcGFjaXR5PSIuMTYiLz4KPGVsbGlwc2UgY3g9IjIxMCIgY3k9IjkwIiByeD0iNDUiIHJ5PSI0OCIgZmlsbD0iI2ZmZjBmMCIgc3Ryb2tlPSIjN2YxZDFkIiBzdHJva2Utd2lkdGg9IjciLz48cGF0aCBkPSJNMTcwIDEzNSBRMjEwIDExNSAyNTAgMTM1IEwyODUgMjM1IFEyMTAgMjc1IDEzNSAyMzVaIiBmaWxsPSIjZmZmMGYwIiBzdHJva2U9IiM3ZjFkMWQiIHN0cm9rZS13aWR0aD0iOCIvPjxwYXRoIGQ9Ik0xODAgMTQ1IEwxNTAgMjE1IE0yNDAgMTQ1IEwyNzAgMjE1IiBzdHJva2U9IiNlNzlhOWEiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSIxODAiIHI9IjI1IiBmaWxsPSIjZTc5YTlhIi8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPlNpc3RlbWEgYXJ0aWN1bGFyPC90ZXh0Pgo8L3N2Zz4=",
+    "textoAlternativo": "Brazo humano flexionado con la articulación del codo destacada."
+  },
+  {
+    "id": 59,
+    "categoria": "Anatomía",
+    "dificultad": "intermedio",
+    "pregunta": "¿Cómo colaboran los sistemas respiratorio y circulatorio para llevar oxígeno a las células?",
+    "tema": "Relación entre sistemas",
+    "respuestaCorrecta": 2,
+    "opciones": [
+      "El circulatorio captura oxígeno del aire sin ayuda pulmonar",
+      "El respiratorio transporta la sangre por los vasos",
+      "Los pulmones incorporan oxígeno a la sangre y el sistema circulatorio lo distribuye a los tejidos",
+      "El sistema digestivo bombea oxígeno"
+    ],
+    "explicacion": "El sistema respiratorio permite el intercambio de oxígeno en los pulmones. Luego, la sangre lo transporta mediante el sistema circulatorio hacia los tejidos.",
+    "dato": "La hemoglobina de los glóbulos rojos transporta gran parte del oxígeno en la sangre.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZjBmMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZTc5YTlhIiBvcGFjaXR5PSIuMTYiLz4KPGVsbGlwc2UgY3g9IjIxMCIgY3k9IjkwIiByeD0iNDUiIHJ5PSI0OCIgZmlsbD0iI2ZmZjBmMCIgc3Ryb2tlPSIjN2YxZDFkIiBzdHJva2Utd2lkdGg9IjciLz48cGF0aCBkPSJNMTcwIDEzNSBRMjEwIDExNSAyNTAgMTM1IEwyODUgMjM1IFEyMTAgMjc1IDEzNSAyMzVaIiBmaWxsPSIjZmZmMGYwIiBzdHJva2U9IiM3ZjFkMWQiIHN0cm9rZS13aWR0aD0iOCIvPjxwYXRoIGQ9Ik0xODAgMTQ1IEwxNTAgMjE1IE0yNDAgMTQ1IEwyNzAgMjE1IiBzdHJva2U9IiNlNzlhOWEiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSIxODAiIHI9IjI1IiBmaWxsPSIjZTc5YTlhIi8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPlJlbGFjacOzbiBlbnRyZSBzaXN0ZW1hczwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Infografía anatómica conectando pulmones, corazón, sangre y células del cuerpo."
+  },
+  {
+    "id": 60,
+    "categoria": "Anatomía",
+    "dificultad": "avanzado",
+    "pregunta": "Después de comer, ¿por qué aumenta el flujo sanguíneo hacia órganos relacionados con la digestión sin que el corazón deje de abastecer al resto del cuerpo?",
+    "tema": "Integración de sistemas",
+    "respuestaCorrecta": 1,
+    "opciones": [
+      "Porque la sangre se convierte en alimento",
+      "Porque la distribución del flujo sanguíneo se regula según las necesidades de los tejidos",
+      "Porque el corazón deja de bombear a los músculos",
+      "Porque los vasos sanguíneos desaparecen temporalmente"
+    ],
+    "explicacion": "El organismo regula el diámetro de los vasos y la distribución del flujo sanguíneo según las necesidades de los tejidos. Durante la digestión puede aumentar el aporte a órganos digestivos mientras se mantiene la circulación general.",
+    "dato": "La regulación del flujo sanguíneo es una parte importante de la homeostasis.",
+    "imagen": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjAgMzAwIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeDI9IjEiIHkxPSIwIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iI2ZmZjBmMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNDIwIiBoZWlnaHQ9IjMwMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2cpIi8+CjxwYXRoIGQ9Ik0wIDI1NSBRMTAwIDIyMCAyMTAgMjYwIFQ0MjAgMjQ1IFYzMDAgSDBaIiBmaWxsPSIjZTc5YTlhIiBvcGFjaXR5PSIuMTYiLz4KPGVsbGlwc2UgY3g9IjIxMCIgY3k9IjkwIiByeD0iNDUiIHJ5PSI0OCIgZmlsbD0iI2ZmZjBmMCIgc3Ryb2tlPSIjN2YxZDFkIiBzdHJva2Utd2lkdGg9IjciLz48cGF0aCBkPSJNMTcwIDEzNSBRMjEwIDExNSAyNTAgMTM1IEwyODUgMjM1IFEyMTAgMjc1IDEzNSAyMzVaIiBmaWxsPSIjZmZmMGYwIiBzdHJva2U9IiM3ZjFkMWQiIHN0cm9rZS13aWR0aD0iOCIvPjxwYXRoIGQ9Ik0xODAgMTQ1IEwxNTAgMjE1IE0yNDAgMTQ1IEwyNzAgMjE1IiBzdHJva2U9IiNlNzlhOWEiIHN0cm9rZS13aWR0aD0iMTIiLz48Y2lyY2xlIGN4PSIyMTAiIGN5PSIxODAiIHI9IjI1IiBmaWxsPSIjZTc5YTlhIi8+Cjx0ZXh0IHg9IjIxMCIgeT0iMjc4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM3ZjFkMWQiPkludGVncmFjacOzbiBkZSBzaXN0ZW1hczwvdGV4dD4KPC9zdmc+",
+    "textoAlternativo": "Infografía del cuerpo humano mostrando corazón, sistema digestivo y distribución dinámica del flujo sanguíneo."
+  }
+];
+
+const $ = s => document.querySelector(s);
+const screens = {home:$("#home"), quiz:$("#quiz"), results:$("#results")};
+let state = {questions:[], index:0, score:0, correct:0, wrong:0, answered:false, mode:"general", category:null, byCat:{}};
+
+const difficultyLabel = {basico:"🟢 BÁSICO",intermedio:"🟡 INTERMEDIO",avanzado:"🔴 AVANZADO"};
+const categoryIcons = {Historia:"📚",Geografía:"🌎",Aritmética:"➗",Geometría:"📐",Biología:"🧬",Anatomía:"🫀"};
+
+function show(name){Object.values(screens).forEach(x=>x.classList.remove("active"));screens[name].classList.add("active");window.scrollTo({top:0,behavior:"smooth"});}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function start(mode, category=null){
+  state={questions:[],index:0,score:0,correct:0,wrong:0,answered:false,mode,category,byCat:{}};
+  let pool=[...QUESTION_BANK];
+  if(mode==="category") pool=pool.filter(q=>q.categoria===category);
+  if(["basico","intermedio","avanzado"].includes(mode)) pool=pool.filter(q=>q.dificultad===mode);
+  if(mode==="random") pool=shuffle(pool).slice(0,20);
+  if(mode==="general") pool=shuffle(pool);
+  else if(mode!=="random" && mode!=="category") pool=shuffle(pool);
+  state.questions=pool;
+  state.questions.forEach(q=>state.byCat[q.categoria]??={c:0,t:0});
+  show("quiz"); renderQuestion();
+}
+document.querySelectorAll(".mode-card").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const mode=btn.dataset.mode;
+    if(mode==="category"){
+      const picker=$("#category-picker"); picker.classList.toggle("hidden");
+      picker.innerHTML=Object.keys(categoryIcons).map(c=>`<button data-cat="${c}">${categoryIcons[c]} ${c}</button>`).join("");
+      picker.querySelectorAll("button").forEach(b=>b.onclick=()=>start("category",b.dataset.cat));
+    }else start(mode);
+  });
+});
+function renderQuestion(){
+  const q=state.questions[state.index]; state.answered=false;
+  $("#score").textContent=state.score;
+  $("#progress-label").textContent=`Pregunta ${state.index+1} de ${state.questions.length}`;
+  const pct=Math.round(state.index/state.questions.length*100); $("#percent").textContent=pct+"%"; $("#progress-bar").style.width=pct+"%";
+  $("#category-chip").textContent=`${categoryIcons[q.categoria]} ${q.categoria}`;
+  $("#difficulty-chip").textContent=difficultyLabel[q.dificultad];
+  const img=$("#question-image"); img.src=q.imagen; img.alt=q.textoAlternativo;
+  $("#question-text").textContent=q.pregunta;
+  $("#feedback").className="feedback hidden"; $("#feedback").innerHTML="";
+  $("#next-btn").className="next-btn hidden";
+  const answers=$("#answers"); answers.innerHTML="";
+  q.opciones.forEach((opt,i)=>{
+    const b=document.createElement("button"); b.className="answer"; b.innerHTML=`<span>${String.fromCharCode(65+i)})</span> ${opt}`;
+    b.onclick=()=>answer(i); answers.appendChild(b);
+  });
+}
+function answer(i){
+  if(state.answered)return; state.answered=true;
+  const q=state.questions[state.index], buttons=[...document.querySelectorAll(".answer")];
+  const ok=i===q.respuestaCorrecta; buttons.forEach(b=>b.disabled=true);
+  buttons[q.respuestaCorrecta].classList.add("correct"); if(!ok)buttons[i].classList.add("wrong");
+  if(ok){state.score+=10;state.correct++}else state.wrong++;
+  state.byCat[q.categoria]??={c:0,t:0}; state.byCat[q.categoria].t++; if(ok)state.byCat[q.categoria].c++;
+  $("#score").textContent=state.score;
+  const fb=$("#feedback"); fb.className="feedback";
+  fb.innerHTML=`<strong>${ok?"✅ ¡Correcto!":"❌ Incorrecto."}</strong>
+  <div>${ok?"Muy bien.":`La respuesta correcta es <b>${q.opciones[q.respuestaCorrecta]}</b>.`}</div>
+  <p>${q.explicacion}</p>
+  ${q.procedimiento?`<div class="procedure"><b>🧮 Procedimiento</b><br>${q.procedimiento}</div>`:""}
+  <p><b>💡 Dato interesante:</b> ${q.dato}</p>`;
+  $("#next-btn").className="next-btn";
+  $("#progress-bar").style.width=Math.round((state.index+1)/state.questions.length*100)+"%";
+}
+$("#next-btn").onclick=()=>{if(state.index<state.questions.length-1){state.index++;renderQuestion()}else finish()};
+function finish(){
+  show("results");
+  const total=state.questions.length, pct=Math.round(state.correct/total*100);
+  $("#final-score").textContent=state.score; $("#correct-count").textContent=state.correct; $("#wrong-count").textContent=state.wrong; $("#final-percent").textContent=pct+"%";
+  const tier=pct>=90?["Excelente","🏆"]:pct>=80?["Muy bueno","⭐"]:pct>=70?["Bueno","👍"]:pct>=60?["Puedes mejorar","📚"]:["Sigue practicando","💪"];
+  $("#result-title").textContent=`${tier[1]} ${tier[0]}`;
+  $("#result-message").textContent=pct>=70?"Tu desempeño muestra una buena base. ¡Sigue retándote!":"Cada intento es una oportunidad para aprender. ¡Vuelve a jugar y supera tu marca!";
+  const rows=Object.entries(state.byCat).map(([c,v])=>`<div class="cat-row"><b>${categoryIcons[c]} ${c}</b><div class="cat-track"><i style="width:${v.t/v.t* (v.c/v.t*100)}%"></i></div><small>${v.c}/${v.t}</small></div>`).join("");
+  $("#category-results").innerHTML=rows;
+}
+$("#quit-btn").onclick=()=>show("home");
+$("#home-btn").onclick=()=>show("home");
+$("#restart-btn").onclick=()=>start(state.mode,state.category);
+
+</script>
+</body>
+</html>
